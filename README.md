@@ -46,6 +46,7 @@ You can generate the augmentated data by using
 python preprocess_data.py --data UPSTO_50k --split train --augtime 100
 python preprocess_data.py --data UPSTO_50k --split test --augtime 20
 ```
+Note: It is suggested to process data under ```rdkit2019``` environment (rdkit version: 2019.03.2)
 
 The processed data will be stored in 
 ```
