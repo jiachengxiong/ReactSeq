@@ -62,4 +62,4 @@ C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(
 ```
 
 More details related to generate E-SMILES can be cound in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
-```
+
