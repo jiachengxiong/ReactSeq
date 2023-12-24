@@ -41,6 +41,20 @@ The ```USPTO_50K``` raw data are stored in
 data/50k_raw
 ```
 
+You can generate the augmentated data by using 
+```
+python preprocess_data.py --data UPSTO_50k --split train --argtime 100
+```
+
+The processed data will be stored in 
+```
+data/50k_e_smiles/train
+data/50k_e_smiles/val
+data/50k_e_smiles/test
+data/50k_e_smiles/r20_test
+```
+You can also download the pre-processed data from [google_drive](www.baidu.com)
+
 ## Generate E-SMILES
 
 For mapped and kekulized rxn_smiles, we can get their corresponding E-SMILES.
