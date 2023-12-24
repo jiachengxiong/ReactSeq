@@ -43,7 +43,8 @@ data/50k_raw
 
 You can generate the augmentated data by using 
 ```
-python preprocess_data.py --data UPSTO_50k --split train --argtime 100
+python preprocess_data.py --data UPSTO_50k --split train --augtime 100
+python preprocess_data.py --data UPSTO_50k --split test --augtime 20
 ```
 
 The processed data will be stored in 
