@@ -61,5 +61,5 @@ E-SMILES (rxn):
 C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
 ```
 
-More details related to generate E-SMILES can be cound in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
+More details related to generating E-SMILES can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
