@@ -55,7 +55,7 @@ data/50k_e_smiles/val
 data/50k_e_smiles/test
 data/50k_e_smiles/r20_test
 ```
-You can also download the pre-processed data from [google_drive](https://www.baidu.com) and put them into the above place.
+You can also download our pre-processed data from [google_drive](https://www.baidu.com) and put them into the above place.
 
 ## Generate E-SMILES
 
