@@ -39,7 +39,7 @@ The ```USPTO_50K``` raw data are stored in
 
 ```bash
 data/50k_raw
-
+```
 
 ## Generate E-SMILES
 
