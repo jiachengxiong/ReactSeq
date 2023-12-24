@@ -35,7 +35,7 @@ rdkit2019 requires:
 
 ## Data and Preprocessing
 
-The ```USPTO_50K``` raw data are stored in
+The ```USPTO_50K``` raw data are sourced from [typed_schneider50k](https://github.com/Hanjun-Dai/GLN) and stored in
 
 ```bash
 data/50k_raw
