@@ -2,7 +2,7 @@
 
 ## Environments
 
-Need two virutal environments (```opennmt3``` and ```rdkit2019```)
+Need two virtual environments (```opennmt3``` and ```rdkit2019```)
 
 ### Environment 1：opennmt3 （for training and inferencing）
 
