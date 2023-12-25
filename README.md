@@ -43,8 +43,9 @@ data/50k_raw
 
 You can generate the augmentated data by using 
 ```
-python preprocess_data.py -data UPSTO_50k -split train -augtime 100
-python preprocess_data.py -data UPSTO_50k -split test -augtime 20
+python preprocess_data.py -data 50k -split train -augtime 100 -rxn_class False
+python preprocess_data.py -data 50k -split val -augtime 20 -rxn_class False
+python preprocess_data.py -data 50k -split test -augtime 20 -rxn_class False
 ```
 Note: It is suggested to process data under ```rdkit2019``` environment (rdkit version: 2019.03.2)
 
