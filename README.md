@@ -112,4 +112,4 @@ Please download our trained model from [google_drive](https://drive.google.com/d
 
 
 ## 🙌 Acknowledgments
-Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py)for the code used in this project.
+Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) for the code used in this project.
