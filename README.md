@@ -59,6 +59,8 @@ data/50k_e_smiles/aug20_test
 You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into the above place.
 
 ## Training
+Note: Train and Inference need to be run under ```opennmt3``` environment
+
 Before training, check out the settings in ```train.sh``` and corresponding ```.yml``` file in ```./config```.
 
 Then, run
