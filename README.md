@@ -100,4 +100,4 @@ C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(
 More details related to generating E-SMILES can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
 ## Acknowledgments
-Special thanks to GraphRetro (https://github.com/vsomnath/graphretro) for the code used in this project.
+Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py)for the code used in this project.
