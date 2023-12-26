@@ -4,7 +4,7 @@
 
 Need two virtual environments (```opennmt3``` and ```rdkit2019```)
 
-### Environment 1：opennmt3 （for training and inferencing）
+### Environment 1：opennmt3（for training and inferencing）
 
 ```bash
 conda create -n opennmt3 python==3.8
@@ -31,6 +31,29 @@ pip install ipykernel --upgrade
 rdkit2019 requires:
 
 - python <=3.7
+
+
+## Quick Start of Generating E-SMILES
+
+For mapped and kekulized rxn_smiles, we can get their corresponding E-SMILES.
+
+Here is an example:
+
+```bash
+mapped_rxn: 
+[CH:5]1=[C:1]([C:2]([CH3:3])=[O:4])[CH:9]=[C:8]2[C:7](=[CH:6]1)[NH:12][CH:11]=[CH:10]2.[O:20]([C:21]([O:22][C:23]([CH3:24])([CH3:26])[CH3:25])=[O:27])[C:13](=[O:14])[O:15][C:16]([CH3:17])([CH3:18])[CH3:19]>>[C:1]1([C:2]([CH3:3])=[O:4])=[CH:5][CH:6]=[C:7]2[C:8](=[CH:9]1)[CH:10]=[CH:11][N:12]2[C:13](=[O:14])[O:15][C:16]([CH3:17])([CH3:18])[CH3:19]
+```
+
+```bash
+SMILES of Product: 
+C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C
+E-SMILES: 
+C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
+E-SMILES (rxn): 
+C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
+```
+
+More details related to ```generating E-SMILES``` and ```transforming E-SMILES to SMILES of Reactants``` can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
 
 ## Data and Preprocessing
@@ -77,27 +100,20 @@ bash inference.sh
 ```
 Here, we inference the test set (augtime x20) by our model.
 
-## Generate E-SMILES
-
-For mapped and kekulized rxn_smiles, we can get their corresponding E-SMILES.
-
-Here is an example:
+## Transforming
+The predictions of model are in the format of E-SMILES, need to be transformed to SMILES of reactants.
 
 ```bash
-mapped_rxn: 
-[CH:5]1=[C:1]([C:2]([CH3:3])=[O:4])[CH:9]=[C:8]2[C:7](=[CH:6]1)[NH:12][CH:11]=[CH:10]2.[O:20]([C:21]([O:22][C:23]([CH3:24])([CH3:26])[CH3:25])=[O:27])[C:13](=[O:14])[O:15][C:16]([CH3:17])([CH3:18])[CH3:19]>>[C:1]1([C:2]([CH3:3])=[O:4])=[CH:5][CH:6]=[C:7]2[C:8](=[CH:9]1)[CH:10]=[CH:11][N:12]2[C:13](=[O:14])[O:15][C:16]([CH3:17])([CH3:18])[CH3:19]
+conda activate rdkit2019
+python transform.py \
+    -src "datasets/50k_e_smiles/aug20_test/src_aug20_test.txt" \
+    -tgt "output/tgt_50k_e_smiles_aug100_train_aug20_test_infer.txt" \
+    -output "output/pred_reactants_50k_e_smiles_aug100_train_aug20_test_infer.txt"
 ```
 
-```bash
-SMILES of Product: 
-C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C
-E-SMILES: 
-C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
-E-SMILES (rxn): 
-C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
-```
+## Quick Retrosynthesis Prediction
+Please download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models`.
 
-More details related to generating E-SMILES can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
 ## Acknowledgments
 Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py)for the code used in this project.
