@@ -86,7 +86,6 @@ Before training, check out the settings in ```train.sh``` and corresponding ```.
 ```bash
 bash train.sh
 ```
-Note: Train and Inference need to be run under ```opennmt3``` environment.
 
 ## Inferencing
 Before inferencing, check out the settings in ```inference.sh``` and corresponding ```.yml``` file in ```./config```. Then, run
