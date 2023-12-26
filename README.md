@@ -70,7 +70,7 @@ python preprocess_data.py -data 50k -split train -augtime 100 -rxn_class False
 python preprocess_data.py -data 50k -split val -augtime 20 -rxn_class False
 python preprocess_data.py -data 50k -split test -augtime 20 -rxn_class False
 ```
-**Note: It is suggested to process data under ```rdkit2019``` environment (rdkit version: 2019.03.2)**
+Note: It is suggested to process data under ```rdkit2019``` environment (rdkit version: 2019.03.2)
 
 The processed data will be stored in 
 ```
@@ -82,18 +82,14 @@ data/50k_e_smiles/aug20_test
 You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into the above place.
 
 ## Training
-Before training, check out the settings in ```train.sh``` and corresponding ```.yml``` file in ```./config```.
-
-Then, run
+Before training, check out the settings in ```train.sh``` and corresponding ```.yml``` file in ```./config```. Then, run
 ```bash
 bash train.sh
 ```
 Note: Train and Inference need to be run under ```opennmt3``` environment.
 
 ## Inferencing
-Before inferencing, check out the settings in ```inference.sh``` and corresponding ```.yml``` file in ```./config```.
-
-Then, run
+Before inferencing, check out the settings in ```inference.sh``` and corresponding ```.yml``` file in ```./config```. Then, run
 ```bash
 bash inference.sh
 ```
