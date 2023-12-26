@@ -1,6 +1,6 @@
 # E_Smiles
 
-## Environments
+## :anchor: Environments
 
 Need two virtual environments (```opennmt3``` and ```rdkit2019```)
 
@@ -82,14 +82,13 @@ data/50k_e_smiles/aug20_test
 You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into the above place.
 
 ## Training
-**Note: Train and Inference need to be run under ```opennmt3``` environment**
-
 Before training, check out the settings in ```train.sh``` and corresponding ```.yml``` file in ```./config```.
 
 Then, run
 ```bash
 bash train.sh
 ```
+Note: Train and Inference need to be run under ```opennmt3``` environment.
 
 ## Inferencing
 Before inferencing, check out the settings in ```inference.sh``` and corresponding ```.yml``` file in ```./config```.
@@ -110,6 +109,7 @@ python transform.py \
     -tgt "output/tgt_50k_e_smiles_aug100_train_aug20_test_infer.txt" \
     -output "output/pred_reactants_50k_e_smiles_aug100_train_aug20_test_infer.txt"
 ```
+Note: Transform need to be under ```rdkit2019``` environment.
 
 ## Quick Retrosynthesis Prediction
 Please download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models`.
