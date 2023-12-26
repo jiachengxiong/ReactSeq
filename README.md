@@ -33,7 +33,7 @@ rdkit2019 requires:
 - python <=3.7
 
 
-## Quick Start of Generating E-SMILES
+## 🚀 Quick Start of Generating E-SMILES
 
 For mapped and kekulized rxn_smiles, we can get their corresponding E-SMILES.
 
