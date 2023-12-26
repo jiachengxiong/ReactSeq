@@ -56,7 +56,7 @@ C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(
 More details related to ```generating E-SMILES``` and ```transforming E-SMILES to SMILES of Reactants``` can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
 
-## Data and Preprocessing
+## 🛠️ Data and Preprocessing
 
 The ```USPTO_50K``` raw data are sourced from [typed_schneider50k](https://github.com/Hanjun-Dai/GLN) and stored in
 
