@@ -111,9 +111,9 @@ python transform.py \
 ```
 Note: Transform need to be under ```rdkit2019``` environment.
 
-## Quick Retrosynthesis Prediction
+## :fire: Quick Retrosynthesis Prediction
 Please download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models`.
 
 
-## Acknowledgments
+## 🙌 Acknowledgments
 Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py)for the code used in this project.
