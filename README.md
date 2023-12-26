@@ -59,7 +59,7 @@ data/50k_e_smiles/aug20_test
 You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into the above place.
 
 ## Training
-Before training, you need to check out the setting in ```train.sh``` and ```config.yml```.
+Before training, you need to check out the setting in ```train.sh``` and corresponding ```config.yml``` in ```./config```.
 Then, just run
 ```bash
 bash train.sh
