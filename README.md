@@ -106,6 +106,9 @@ python transform.py \
 ```
 Note: Transform need to be under ```rdkit2019``` environment.
 
+## Calculating Top-k Accuracy
+Run  ```cal_top_k_accuracy.ipynb```.
+
 ## :fire: Quick Retrosynthesis Prediction
 Please download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models`.
 
