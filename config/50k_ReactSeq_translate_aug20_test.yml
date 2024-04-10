@@ -1,0 +1,12 @@
+model: trained_models/retrosnyhesis_50k_ReactSeq_model_on_50k_aug100.pt
+src: datasets/50k_ReactSeq/aug20_test/src_aug20_test.txt
+output: output/tgt_50k_ReactSeq_aug100_train_aug20_test_infer.txt
+gpu: 7
+beam_size: 10
+n_best: 10
+batch_size: 16384
+#batch_size: 8192
+batch_type: tokens
+max_length: 500
+seed: 0
+

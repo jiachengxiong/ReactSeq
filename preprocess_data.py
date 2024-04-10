@@ -186,14 +186,14 @@ def main():
     if not args.rxn_class:
         src = [" ".join(list(s)) for s in src_list]
         tgt = [" ".join(list(t)) for t in tgt_list]
-        src_file_path = f"./datasets/{args.data}_e_smiles/aug_{args.augtime}_{args.split}/src_{args.split}.txt"
-        tgt_file_path = f"./datasets/{args.data}_e_smiles/aug_{args.augtime}_{args.split}/tgt_{args.split}.txt"
+        src_file_path = f"./datasets/{args.data}_ReactSeq/aug_{args.augtime}_{args.split}/src_{args.split}.txt"
+        tgt_file_path = f"./datasets/{args.data}_ReactSeq/aug_{args.augtime}_{args.split}/tgt_{args.split}.txt"
 
     elif args.rxn_class:
         src = [c + " " + " ".join(list(s)) for c,s in zip(rxn_class_list, src_list)]
         tgt = [" ".join(list(t)) for t in tgt_list]
-        src_file_path = f"./datasets/{args.data}_e_smiles_with_rxn_class/aug_{args.augtime}_{args.split}/src_{args.split}.txt"
-        tgt_file_path = f"./datasets/{args.data}_e_smiles_with_rxn_class/aug_{args.augtime}_{args.split}/tgt_{args.split}.txt"
+        src_file_path = f"./datasets/{args.data}_ReactSeq_with_rxn_class/aug_{args.augtime}_{args.split}/src_{args.split}.txt"
+        tgt_file_path = f"./datasets/{args.data}_ReactSeq_with_rxn_class/aug_{args.augtime}_{args.split}/tgt_{args.split}.txt"
 
     # Write processed data into .txt 
     os.makedirs(os.path.dirname(src_file_path), exist_ok=True)

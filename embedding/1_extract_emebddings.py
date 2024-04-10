@@ -35,7 +35,7 @@ DATASET = 'all'
 RXNTYPE = False 
 
 # Load Ckpt without rxn_type
-ckpt_path = "../trained_models/retrosynthesis_E_smiles_model_on_50k_aug100.pt"
+ckpt_path = "../trained_models/retrosynthesis_ReactSeq_model_on_50k_aug100.pt"
 checkpoint = load_checkpoint(ckpt_path)
 vocabs = dict_to_vocabs(checkpoint['vocab'])
 token2id = vocabs['src'].tokens_to_ids
@@ -57,17 +57,17 @@ print("Loading data ...")
 
 # without rxn_type (extract the first fold data)
 if DATASET == "all":    
-    with open(f"../datasets/50k_e_smiles/aug100_train/src_aug100_train.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug100_train/src_aug100_train.txt") as f:
         src_data = f.readlines()[:39946]
-    with open(f"../datasets/50k_e_smiles/aug20_test/src_aug20_test.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug20_test/src_aug20_test.txt") as f:
         src_data.extend(f.readlines()[:5000])
-    with open(f"../datasets/50k_e_smiles/aug20_val/src_aug20_val.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug20_val/src_aug20_val.txt") as f:
         src_data.extend(f.readlines()[:4995])
-    with open(f"../datasets/50k_e_smiles/aug100_train/tgt_aug100_train.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug100_train/tgt_aug100_train.txt") as f:
         tgt_data = f.readlines()[:39946]
-    with open(f"../datasets/50k_e_smiles/aug20_test/tgt_aug20_test.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug20_test/tgt_aug20_test.txt") as f:
         tgt_data.extend(f.readlines()[:5000])
-    with open(f"../datasets/50k_e_smiles/aug20_val/tgt_aug20_val.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/aug20_val/tgt_aug20_val.txt") as f:
         tgt_data.extend(f.readlines()[:4995])
             
 print(len(src_data))
@@ -108,8 +108,8 @@ with torch.no_grad():
         dec_out, attns = model.decoder(dec_in, enc_out, src_len=src_len, with_align=False)
         dec_outs.append(dec_out)
 
-joblib.dump(enc_outs, f"enc_outs_{DATASET}_without_rxn_e_smiles.pkl")
-joblib.dump(dec_outs, f"dec_outs_{DATASET}_without_rxn_e_smiles.pkl")
+joblib.dump(enc_outs, f"enc_outs_{DATASET}_without_rxntype_ReactSeq.pkl")
+joblib.dump(dec_outs, f"dec_outs_{DATASET}_without_rxntype_ReactSeq.pkl")
 
 # Usage
-# python 1_extract_emebddings.py -config ../config/50k_e_smiles_finetune.yml
+# python 1_extract_emebddings.py -config ../config/50k_ReactSeq_finetune.yml
