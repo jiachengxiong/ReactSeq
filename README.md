@@ -1,4 +1,4 @@
-# E_Smiles
+# ReactSeq
 
 ## :anchor: Environments
 
@@ -33,9 +33,9 @@ rdkit2019 requires:
 - python <=3.7
 
 
-## 🚀 Quick Start of Generating E-SMILES
+## 🚀 Quick Start of Generating ReactSeq
 
-For mapped and kekulized rxn_smiles, we can get their corresponding E-SMILES.
+For mapped and kekulized rxn_smiles, we can get their corresponding ReactSeq.
 
 Here is an example:
 
@@ -47,13 +47,13 @@ mapped_rxn:
 ```bash
 SMILES of Product: 
 C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C
-E-SMILES: 
+ReactSeq: 
 C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
-E-SMILES (rxn): 
+ReactSeq (rxn): 
 C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
 ```
 
-More details related to ```generating E-SMILES``` and ```transforming E-SMILES to SMILES of Reactants``` can be found in [Usage_Example_of_E_SMILES.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
+More details related to ```generating ReactSeq``` and ```transforming ReactSeq to SMILES of Reactants``` can be found in [Usage_Example_of_ReactSeq.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
 
 
 ## 🛠️ Data and Preprocessing
@@ -74,9 +74,9 @@ Note: It is suggested to process data under ```rdkit2019``` environment (rdkit v
 
 The processed data will be stored in 
 ```
-data/50k_e_smiles/aug100_train
-data/50k_e_smiles/aug20_val
-data/50k_e_smiles/aug20_test
+data/50k_ReactSeq/aug100_train
+data/50k_ReactSeq/aug20_val
+data/50k_ReactSeq/aug20_test
 ```
 
 You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into the above place.
@@ -100,9 +100,9 @@ The predictions of model are in the format of E-SMILES, need to be transformed t
 ```bash
 conda activate rdkit2019
 python transform.py \
-    -src "datasets/50k_e_smiles/aug20_test/src_aug20_test.txt" \
-    -tgt "output/tgt_50k_e_smiles_aug100_train_aug20_test_infer.txt" \
-    -output "output/pred_reactants_50k_e_smiles_aug100_train_aug20_test_infer.txt"
+    -src "datasets/50k_ReactSeq/aug20_test/src_aug20_test.txt" \
+    -tgt "output/tgt_50k_ReactSeq_aug100_train_aug20_test_infer.txt" \
+    -output "output/pred_reactants_50k_ReactSeq_aug100_train_aug20_test_infer.txt"
 ```
 Note: Transform need to be under ```rdkit2019``` environment.
 
