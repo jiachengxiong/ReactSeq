@@ -95,7 +95,7 @@ bash inference.sh
 Here, we inference the test set (augtime x20) by our model.
 
 ## Transforming
-The predictions of model are in the format of E-SMILES, need to be transformed to SMILES of reactants.
+The predictions of model are in the format of ReactSeq, need to be transformed to SMILES of reactants.
 
 ```bash
 conda activate rdkit2019
