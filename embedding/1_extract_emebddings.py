@@ -32,7 +32,7 @@ opt, unknown = parser.parse_known_args()
 opt.data = eval(opt.data)
 
 DATASET = 'all'
-RXNTYPE = False 
+RXNTYPE = False
 
 # Load Ckpt without rxn_type
 ckpt_path = "../trained_models/retrosynthesis_ReactSeq_model_on_50k_aug100.pt"
@@ -52,22 +52,28 @@ model = build_model(model_opt, opt, vocabs, checkpoint, device_id)
 model.load_state_dict(checkpoint, strict = False)
 model = model.to(device)
 
+# The Index_List of duplicated first fold of the shuffled training data
+with open('index_list.pkl', 'rb') as file:
+    index_list = pickle.load(file)
+
 ## Dataloader
 print("Loading data ...")
 
 # without rxn_type (extract the first fold data)
 if DATASET == "all":    
     with open(f"../datasets/50k_ReactSeq/aug100_train/src_aug100_train.txt") as f:
-        src_data = f.readlines()[:39946]
-    with open(f"../datasets/50k_ReactSeq/aug20_test/src_aug20_test.txt") as f:
+        src_data_ = f.readlines()
+    src_data = [src_data_[i] for i in index_list]
+    with open(f"../datasets/50k_ReactSeq/test/src_test.txt") as f:
         src_data.extend(f.readlines()[:5000])
-    with open(f"../datasets/50k_ReactSeq/aug20_val/src_aug20_val.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/val/src_val.txt") as f:
         src_data.extend(f.readlines()[:4995])
     with open(f"../datasets/50k_ReactSeq/aug100_train/tgt_aug100_train.txt") as f:
-        tgt_data = f.readlines()[:39946]
-    with open(f"../datasets/50k_ReactSeq/aug20_test/tgt_aug20_test.txt") as f:
+        tgt_data_ = f.readlines()
+    tgt_data = [tgt_data_[i] for i in index_list]
+    with open(f"../datasets/50k_ReactSeq/test/tgt_test.txt") as f:
         tgt_data.extend(f.readlines()[:5000])
-    with open(f"../datasets/50k_ReactSeq/aug20_val/tgt_aug20_val.txt") as f:
+    with open(f"../datasets/50k_ReactSeq/val/tgt_val.txt") as f:
         tgt_data.extend(f.readlines()[:4995])
             
 print(len(src_data))

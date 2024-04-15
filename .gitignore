@@ -1,0 +1,9 @@
+# 3.2GB
+embedding/dec_outs_all_without_rxntype_ReactSeq.pkl
+
+# aug100_training data
+datasets/50k_ReactSeq/aug100_train
+datasets/50k_ReactSeq_with_rxn_type/aug100_train
+
+# extracted embeddings
+embedding/embedding_reactseq_decoder_edit_mean.csv
