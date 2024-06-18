@@ -18,7 +18,7 @@ OpenNMT-py requires:
 - Python >= 3.8
 - PyTorch >= 2.0 <2.1
 
-### Environment 2：rdkit2019 (for data processing related to rdkit and lingo)
+### Environment 2：rdkit2019 (for data processing related to rdkit and indigo)
 
 ```bash
 conda create -n rdkit2019 python==3.7
