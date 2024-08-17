@@ -1,7 +1,7 @@
 ### Step 1. Extract e_smiles embedding of reactions
 
 ```python
-python 1_extract_emebddings.py -config ../config/50k_e_smiles_finetune.yml
+python 1_extract_emebddings.py -config ../config/50k_ReactSeq_finetune.yml
 ```
 
 ### Step 2. Extract embedding of edit-tokens
