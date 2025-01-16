@@ -53,7 +53,7 @@ ReactSeq (rxn):
 C1(C(C)=O)=CC=C2C(=C1)C=CN2C(=O)OC(C)(C)C>>>C1(C(C)=O)=CC=C2C(=C1)C=CN2!C(=O)OC(C)(C)C<><C(OC(C)(C)C)(=O)[O:1]>
 ```
 
-More details related to ```generating ReactSeq``` and ```transforming ReactSeq to SMILES of Reactants``` can be found in [Usage_Example_of_ReactSeq.ipynb](https://github.com/jiachengxiong/E_Smiles/blob/main/Usage_Example_of_E_SMILES.ipynb)
+More details related to ```generating ReactSeq``` and ```transforming ReactSeq to SMILES of Reactants``` can be found in [Usage_Example_of_ReactSeq.ipynb](https://github.com/jiachengxiong/ReactSeq/blob/main/Usage_Example_of_ReactSeq.ipynb)
 
 
 ## 🛠️ Data and Preprocessing
