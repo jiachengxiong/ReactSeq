@@ -1,0 +1,10 @@
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < [ C H 3 : 1 ] >
+C O C 1 = C C ( C ( = O ) ! O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 O < [ C l : 1 ] > < >
+C O C 1 = C C ( C ( = O ) ! O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 O < [ O H : 1 ] > < >
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < C 1 C C C O [ C H : 1 ] 1 >
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < C [ C : 1 ] = O >
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < O ( C ) [ C H 2 : 1 ] >
+C ! O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 O < [ I : 1 ] > < >
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < C ( C ) ( C ) ( C ) [ C : 1 ] = O >
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 C ; O
+C O C 1 = C C ( C ( = O ) O C 2 = C ( B r ) C = C ( B r ) C = C 2 O C ) = C C = C 1 [ ~ O H ] < C ( C ) ( C ) [ C : 1 ] = O >

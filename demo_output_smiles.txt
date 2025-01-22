@@ -1,0 +1,10 @@
+COc1ccc(C(=O)Oc2c(Br)cc(Br)cc2OC)cc1OC
+COc1cc(Br)cc(Br)c1O.COc1cc(C(=O)Cl)ccc1O
+COc1cc(Br)cc(Br)c1O.COc1cc(C(=O)O)ccc1O
+COc1cc(C(=O)Oc2c(Br)cc(Br)cc2OC)ccc1OC1CCCCO1
+COc1cc(C(=O)Oc2c(Br)cc(Br)cc2OC)ccc1OC(C)=O
+COCOc1ccc(C(=O)Oc2c(Br)cc(Br)cc2OC)cc1OC
+CI.COc1cc(Br)cc(Br)c1OC(=O)c1ccc(O)c(O)c1
+COc1cc(C(=O)Oc2c(Br)cc(Br)cc2OC)ccc1OC(=O)C(C)(C)C
+COc1cc(C(=O)Oc2c(Br)cc(Br)cc2OC)ccc1O
+COc1cc(C(=O)Oc2c(Br)cc(Br)cc2OC)ccc1OC(=O)C(C)C

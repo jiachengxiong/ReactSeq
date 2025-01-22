@@ -138,6 +138,15 @@ Here, we have provided a demo on the [Gradio web](https://huggingface.co/spaces/
 
 You can aslo download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models/`, then run the scripts by referring to ```inference.sh```.
 
+For example, to predict the retrosynthesis of the molecule ```COC1=CC(C(=O)OC2=C(Br)C=C(Br)C=C2OC)=CC=C1O``` in ```demo_src.txt```
+1. **Predict top-k ReactSeq**: Run the following command to generate the top-k ReactSeq predictions, which will be saved in ```demo_tgt.txt```:
+```bash
+demo_inference.sh
+```
+2. **Transform ReactSeq to SMILES**: After obtaining the ReactSeq predictions, run the following command to convert them into SMILES format, with the output saved in ```demo_output_smiles.txt```:
+```bash
+demo_transform.sh
+```
 
 ## 🙌 Acknowledgments
 Special thanks to [GraphRetro](https://github.com/vsomnath/graphretro) and [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) for the code used in this project.
