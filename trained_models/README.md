@@ -1,0 +1,1 @@
+The `trained_models` fold is used to store the best checkpoints.

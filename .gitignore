@@ -7,6 +7,9 @@ datasets/50k_ReactSeq/aug100_train
 datasets/50k_ReactSeq_with_prompt/aug100_train
 datasets/50k_ReactSeq_with_rxn_type/aug100_train
 
+# trained_models
+trained_models/*.pt
+
 # output
 output/*.txt
 
@@ -15,3 +18,6 @@ embedding/embedding_reactseq_decoder_edit_mean.csv
 
 # __pycache__ files
 __pycache__/
+
+# yield
+yield/

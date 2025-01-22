@@ -21,6 +21,7 @@ from onmt.model_builder import build_model, build_embeddings, build_encoder, bui
 from onmt.constants import DefaultTokens, ModelTask
 import joblib
 from tqdm import tqdm
+import pickle
 
 def _get_parser():
     parser = ArgumentParser(description="train.py")
@@ -82,6 +83,9 @@ src_list = [d.split(" ") for d in src_data]
 tgt_data = [d[:-1] for d in tgt_data]
 tgt_list = [d.split(" ") for d in tgt_data]
 label_list = [d[0] for d in src_list]
+
+import pdb
+pdb.set_trace()
 
 def tokens2ids(src):
     return [token2id[token] for token in src]

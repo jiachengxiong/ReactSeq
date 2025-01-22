@@ -1,1 +1,1 @@
-The `ouput` fold is used to store the inferenced output.
+The `output` fold is used to store the inferenced output.
