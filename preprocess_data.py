@@ -111,7 +111,7 @@ def augmentate_data(df, aug_time):
 
 def preprocess_data(df, data_source, split, augtime):
     """
-    Clean few data, and Get E-SMILES,
+    Clean few data, and Get ReactSeq,
     """
     if data_source == '50k':
         if split == "train":
@@ -147,7 +147,7 @@ def preprocess_data(df, data_source, split, augtime):
             df = df.drop(rows_to_drop)
             df = df.reset_index(drop = True)
             rxn_class_list = [f"class_{n}" for n in df['class']]
-            e_smiles_list = process_map(get_e_smiles, tqdm(df['reactants>reagents>production'], desc = "transforming into E-SMILES ..."), max_workers = 20)
+            e_smiles_list = process_map(get_e_smiles, tqdm(df['reactants>reagents>production'], desc = "transforming into ReactSeq ..."), max_workers = 20)
 
         elif split == "val":
             idx_to_drop = [2302, 2527, 2950, 4368, 4863, 4890]
@@ -157,7 +157,7 @@ def preprocess_data(df, data_source, split, augtime):
             df = df.drop(rows_to_drop)
             df = df.reset_index(drop = True)
             rxn_class_list = [f"class_{n}" for n in df['class']]
-            e_smiles_list = process_map(get_e_smiles, tqdm(df['reactants>reagents>production'], desc = "transforming into E-SMILES ..."), max_workers = 20)
+            e_smiles_list = process_map(get_e_smiles, tqdm(df['reactants>reagents>production'], desc = "transforming into ReactSeq ..."), max_workers = 20)
 
         return  e_smiles_list, rxn_class_list
 
@@ -176,10 +176,10 @@ def main():
     # Data Augmentation (Kekulized and Mapped rxn_smiles)
     augmentated_df = augmentate_data(raw_df, args.augtime)
 
-    # Get E-SMILES, Clean few data
+    # Get ReactSeq, Clean few data
     e_smiles_list, rxn_class_list = preprocess_data(augmentated_df, args.data, args.split, args.augtime)
 
-    # Tokenization E-SMILES with single characters
+    # Tokenization ReactSeq with single characters
     src_list, tgt_list = [i.split(">>>")[0] for i in e_smiles_list], [i.split(">>>")[1] for i in e_smiles_list]
 
     # Unknown/Given rxn_class 

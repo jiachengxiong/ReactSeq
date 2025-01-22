@@ -9,8 +9,8 @@ Need two virtual environments (```opennmt3``` and ```rdkit2019```)
 ```bash
 conda create -n opennmt3 python==3.8
 conda activate opennmt3
-pip install -i https://pypi.tuna.tsinghua.edu.cn/simple torch==2.0 numpy transformers pandas tqdm
-pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U OpenNMT-py
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple torch==2.0 numpy transformers==4.34.0 pandas tqdm
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U OpenNMT-py==3.4.1
 ```
 
 OpenNMT-py requires:
@@ -110,9 +110,33 @@ Note: Transform need to be under ```rdkit2019``` environment.
 Run  ```cal_top_k_accuracy.ipynb```.
 The results are reproducible by placing our predictions from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) into `output/`.
 
+## Retrosynthesis with Prompt (Similar to the above）
+
+**Data Processing**. You can generate the src data with prompt by running ```preprocess_prompt_data.ipynb```. You can also download our pre-processed data from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into ```datasets/50k_ReactSeq_with_prompt/```.
+
+**Training**
+```bash
+bash train_prompt.sh
+```
+
+**Inferencing**
+```bash
+bash inference_prompt.sh
+```
+
+**Transforming**.
+```bash
+conda activate rdkit2019
+python transform.py \
+    -src "datasets/50k_ReactSeq/aug20_test/src_aug20_test.txt" \
+    -tgt "output/tgt_50k_ReactSeq_with_prompt_aug100_train_aug20_test_infer.txt" \
+    -output "output/pred_reactants_50k_ReactSeq_with_prompt_aug100_train_aug20_test_infer.txt"
+```
 
 ## :fire: Quick Retrosynthesis Prediction
-Please download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models/`.
+Here, we have provided a demo on the [Gradio web](https://huggingface.co/spaces/Oopstom/ReactSeq) for a quick experience with ReactSeq.
+
+You can aslo download our trained model from [google_drive](https://drive.google.com/drive/folders/1a6NL5apcP_7isY3HccLjkSsjJGwp_FwD?usp=sharing) and put them into `trained_models/`, then run the scripts by referring to ```inference.sh```.
 
 
 ## 🙌 Acknowledgments
