@@ -124,7 +124,7 @@ bash train_prompt.sh
 bash inference_prompt.sh
 ```
 
-**Transforming**.
+**Transforming**
 ```bash
 conda activate rdkit2019
 python transform.py \
