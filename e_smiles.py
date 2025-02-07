@@ -3326,10 +3326,10 @@ def get_e_smiles(rxn):
     Generates a ReactSeq representation from the input reaction string.
 
     Parameters:
-    rxn (str): Input reaction string.
+    rxn (str): Input reaction string in RXN format.
 
     Returns:
-    str: ReactSeq representation.
+    str: ReactSeq string.
     """
     p_b = run_get_p_b_l_forward(rxn)
     b_smiles = get_b_smiles_check(p_b)
@@ -3352,7 +3352,15 @@ def get_e_smiles(rxn):
     return iso_to_symbo(txt,dic_num_to_str)
 
 def get_e_smiles_with_check(rxn):
+    """
+    Generates a ReactSeq representation from the input reaction string with error checking.
 
+    Parameters:
+    rxn (str): Input reaction string in RXN format.
+
+    Returns:
+    str: ReactSeq string.
+    """
     p_b = run_get_p_b_l_check(rxn)
     b_smiles = get_b_smiles_check(p_b)
     lg_lis = get_lg_forward(p_b[1],p_b[6])
@@ -3374,6 +3382,21 @@ def get_e_smiles_with_check(rxn):
     return iso_to_symbo(txt,dic_num_to_str)
 
 def get_edit_from_e_smiles(text):
+    """
+    Extracts the editing operations from a ReactSeq representation.
+
+    Parameters:
+    text (str): Input ReactSeq string.
+
+    Returns:
+    tuple: A tuple containing the following transformation data:
+        - core_edits (list): List of core edits in the reaction.
+        - chai_edits (list): List of chiral edits in the reaction.
+        - stereo_edits (list): List of stereochemical changes in the reaction.
+        - charge_edits (list): List of charge changes in the reaction.
+        - core_edits_add (list): List of newly added chemical bonds in the reaction.
+        - lg_map_lis (list): List of leaving group attached during the reaction.
+    """
     text = symbo_to_iso(text,dic_str_to_num)
     o_smiles = text.split('>>>')[0]
     b_smiles = text.split('>>>')[1].split('<')[0]
