@@ -71,6 +71,19 @@ def map_reac_and_frag(reac_mols: List[Chem.Mol], frag_mols: List[Chem.Mol]):
 
 
 def remove_s_H(frag_mol):
+    """
+    Removes standalone hydrogens from a fragment molecule.
+
+    Parameters
+    ----------
+    frag_mol : Chem.Mol
+        A fragment molecule.
+
+    Returns
+    -------
+    Chem.Mol
+        Modified fragment molecule.
+    """
     while True:
         idx = ''
         for atom in frag_mol.GetAtoms():
@@ -176,6 +189,7 @@ def apply_edits_to_mol_break(mol, edits):
 
 
 def find_reac_edit(frag_mols_1,reac_mols_1,core_edits):
+
     reac_mol_map_num = [i.GetAtomMapNum() for i in reac_mols_1.GetAtoms()] 
     frag_mol_map_num = [i.GetAtomMapNum() for i in frag_mols_1.GetAtoms()]
     lg_map_num = [i for i in reac_mol_map_num if i not in frag_mol_map_num]  
@@ -268,7 +282,22 @@ def correct_mol_1(mol,is_nitrine_c):
 
 
 def correct_mol(mol_,keep_map):
+    """
+    Corrects and standardizes a molecular structure.
 
+    Parameters
+    ----------
+    mol_ : Chem.Mol
+        Input molecule to be corrected.
+    keep_map : bool
+        If True, retains atom mapping and explicit hydrogens.
+
+    Returns
+    -------
+    mol : Chem.Mol
+        Corrected molecule with updated charges, aromaticity, 
+        atom maps, and chirality.
+    """
     mol = copy.deepcopy(mol_)
     atom_map_lis = [] 
     idx_H_dic = {}
@@ -316,6 +345,19 @@ def correct_mol(mol_,keep_map):
 
 
 def get_atom_map_chai_dic(mol):
+    """
+    Retrieves a dictionary mapping atom map numbers to their chirality.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        Input molecule.
+
+    Returns
+    -------
+    dic : dict
+        Dictionary where keys are atom map numbers and values are chirality labels.
+    """
     dic = {}
     for idx,chiral in Chem.FindMolChiralCenters(mol):
         atom_map = mol.GetAtomWithIdx(idx).GetAtomMapNum()
@@ -324,6 +366,20 @@ def get_atom_map_chai_dic(mol):
 
 
 def get_atom_map_stereo_dic(mol):
+    """
+    Retrieves a dictionary mapping atom map pairs to bond stereochemistry.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        Input molecule.
+
+    Returns
+    -------
+    stereo_dic : dict
+        Dictionary where keys are tuples of atom map numbers (sorted) 
+        and values are bond stereochemistry.
+    """
     map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in mol.GetAtoms()}
     stereo_dic = {}
     for bond in mol.GetBonds():
@@ -333,6 +389,19 @@ def get_atom_map_stereo_dic(mol):
 
 
 def cano_smiles_map(smiles):
+    """
+    Generates a canonical SMILES string while preserving atom mapping.
+
+    Parameters
+    ----------
+    smiles : str
+        Input SMILES string.
+
+    Returns
+    -------
+    smiles : str
+        Canonicalized SMILES string with atom mapping retained.
+    """
     atom_map_lis = []
     mol = Chem.MolFromSmiles(smiles,sanitize = False)
     for atom in mol.GetAtoms():
@@ -348,7 +417,25 @@ def cano_smiles_map(smiles):
 
 
 def get_stereo_edit_mine(reac_mol,prod_mol):   
+    """
+    Compares the stereochemistry of bonds between a reactant and a product molecule.
+    Identifies changes in stereochemistry, and returns a list of stereochemical edits.
 
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule.
+    prod_mol : Chem.Mol
+        The product molecule.
+
+    Returns
+    -------
+    stereo_edits : list of str
+        List of stereochemical edits in the format:
+        'atom1:atom2:0:stereo_change', where:
+          - atom1, atom2: mapped indices of the bonded atoms.
+          - stereo_change: type of stereochemical change ('a', 'e', or 'z').
+    """
     reac_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in reac_mol.GetAtoms()}
     prod_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in prod_mol.GetAtoms()}
     
@@ -407,6 +494,24 @@ def get_stereo_edit_mine(reac_mol,prod_mol):
 
 
 def apply_stereo_change(prod_mol,stereo_edits):
+    """
+    Applies stereochemical changes to the product molecule based on provided edits.
+
+    Parameters
+    ----------
+    prod_mol : Chem.Mol
+        The product molecule to apply stereochemical changes to.
+    stereo_edits : list of str
+        A list of stereochemical edits in the format:
+        'atom1:atom2:0:stereo_change', where:
+          - atom1, atom2: mapped indices of the bonded atoms.
+          - stereo_change: type of stereochemical change ('a', 'e', or 'z').
+
+    Returns
+    -------
+    prod_mol : Chem.Mol
+        The modified product molecule with applied stereochemical changes.
+    """
     p_amap_idx =  {atom.GetAtomMapNum(): atom.GetIdx() for atom in prod_mol.GetAtoms()}
 
     prod_mol = copy.deepcopy(prod_mol)
@@ -656,7 +761,25 @@ def apply_edits_to_mol_connect(mol, edits):
 
 
 def get_charge_edit_mine(reac_mol, prod_mol,core_edits):
-    
+    """
+    Computes charge edits between the reactant and product molecules based on the core edits provided.
+
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule to check for charge changes.
+    prod_mol : Chem.Mol
+        The product molecule to check for charge changes.
+    core_edits : list of str
+        A list of core edits, each in the format 'atom1:atom2:bond_order:new_bond_order', used to identify the locations of changes.
+
+    Returns
+    -------
+    charge_edits : list of str
+        A list of charge edits in the format 'atom_map:0:0:new_charge', where:
+          - atom_map: the atom map number of the atom with a charge change.
+          - new_charge: the updated charge of the atom in the product molecule.
+    """
     lg_site_lis = []
     for core_edit in core_edits:
         x,y,bo,n_bo = core_edit.split(':')
@@ -686,6 +809,19 @@ def get_charge_edit_mine(reac_mol, prod_mol,core_edits):
 
 
 def get_atom_map_charge_dic(mol):
+    """
+    Creates a dictionary of atom map numbers and their corresponding formal charges for a molecule.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        The molecule for which the atom map and charges are to be extracted.
+
+    Returns
+    -------
+    dic : dict
+        A dictionary where the keys are atom map numbers and the values are the formal charges of the atoms.
+    """
     dic = {}
     for atom in mol.GetAtoms():
         dic[atom.GetAtomMapNum()] = atom.GetFormalCharge()
@@ -693,7 +829,21 @@ def get_atom_map_charge_dic(mol):
 
 
 def apply_charge_change(mol,charge_edits):
+    """
+    Applies charge changes to a molecule based on a list of charge edits.
 
+    Parameters
+    ----------
+    mol : Chem.Mol
+        The molecule to which the charge changes will be applied.
+    charge_edits : list of str
+        A list of charge edits.
+
+    Returns
+    -------
+    mol : Chem.Mol
+        The updated molecule with the applied charge changes.
+    """
     amap = {atom.GetAtomMapNum(): atom.GetIdx() for atom in mol.GetAtoms()}
     for edit in charge_edits:
         x, y, prev_charge, new_charge = edit.split(":")
@@ -702,7 +852,22 @@ def apply_charge_change(mol,charge_edits):
 
 
 def get_core_edit_mine(reac_mol, prod_mol):
+    """
+    Identifies core edits (bond changes and atom charge adjustments) between reactant and product molecules.
 
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule.
+    prod_mol : Chem.Mol
+        The product molecule.
+
+    Returns
+    -------
+    core_edits : list of str
+        A list of core edits, where each edit is formatted as 'atom1:atom2:bond_order_before:bond_order_after'.
+        The edits represent bond changes (addition, removal, or modification) between the reactant and product.
+    """
     prod_bonds = get_bond_info(prod_mol)
     reac_bonds = get_bond_info(reac_mol)
     
@@ -840,7 +1005,24 @@ def get_chai_edit_mine(reac_mol, prod_mol):
 
 
 
-def get_chai_edit_mine(reac_mol, prod_mol):    
+def get_chai_edit_mine(reac_mol, prod_mol):  
+    """
+    Identifies changes in chirality centers between reactant and product molecules.
+
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule.
+    prod_mol : Chem.Mol
+        The product molecule.
+
+    Returns
+    -------
+    chai_edits : list of str
+        A list of chirality edits, where each edit is formatted as 
+        'atom_map_number:0:0:chirality_change'. The edits represent changes in the 
+        chirality assignment of atoms during the reaction.
+    """
     reac_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in reac_mol.GetAtoms()}
     prod_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in prod_mol.GetAtoms()}
     
@@ -877,7 +1059,22 @@ def get_chai_edit_mine(reac_mol, prod_mol):
 
 
 def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):   
-    
+    """
+    Identifies leaving groups (LG) and their associated connection points 
+    based on molecular fragments, reactants, and the product molecule.
+
+    Parameters:
+    frag_mols (list): A list of molecular fragments representing the products of bond breaking.
+    reac_mols (list): A list of reactant molecules participating in the reaction.
+    core_edits (list): A list of core edits, defining changes at the reaction center.
+    prod_mol (Mol): The product molecule resulting from the reaction.
+
+    Returns:
+    list: A list of tuples representing the leaving groups and their connection points.
+        Each tuple contains:
+        - The SMILES string of the leaving group.
+        - A list of atom map numbers indicating the connection points in the product molecule.
+    """
     lg_map_lis = []
     prod_map_num_lis = [i.GetAtomMapNum() for i in prod_mol.GetAtoms()]
     
@@ -996,7 +1193,22 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
 
 
 def get_core_edit_mine(reac_mol, prod_mol):
+    """
+    Identifies core edits (bond changes and atom charge adjustments) between reactant and product molecules.
 
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule.
+    prod_mol : Chem.Mol
+        The product molecule.
+
+    Returns
+    -------
+    core_edits : list of str
+        A list of core edits, where each edit is formatted as 'atom1:atom2:bond_order_before:bond_order_after'.
+        The edits represent bond changes (addition, removal, or modification) between the reactant and product.
+    """
     prod_bonds = get_bond_info(prod_mol)
     reac_bonds = get_bond_info(reac_mol)
     
@@ -1392,6 +1604,17 @@ def get_chair_dict_without_atom_map(temp_p):
 
 
 def run_get_p_b_l(rxn_smi):
+    """
+    Processes a reaction SMILES string to align reactants and products, 
+    identify molecular edits, and reconstruct the overall reaction structure.
+
+    Args:
+        rxn_smi (str): A reaction SMILES string in the format "reactants>>products".
+
+    Returns:
+        str or None: Returns an error type if certain conditions are not met, 
+                     otherwise performs processing without returning a value.
+    """
     try:
         r, p = rxn_smi.split(">>")
         
@@ -2070,6 +2293,16 @@ def run_get_p_b_l_check(rxn):
         
 
 def get_atom_pair_bond_idx_dic(concise_smiles):
+    """
+    Creates a dictionary mapping atom pairs to bond indices in a molecule.
+
+    Args:
+        concise_smiles (str): A SMILES string representing a molecule.
+
+    Returns:
+        dict: A dictionary where keys are tuples of atom indices (min_atom, max_atom)
+              and values are the corresponding bond indices.
+    """
     mol_indigo = indigo.loadMolecule(concise_smiles)
     mol_block_indigo = mol_indigo.molfile()                    
     
@@ -2097,6 +2330,16 @@ def get_atom_pair_bond_idx_dic(concise_smiles):
 
 
 def get_rm_token_lis(concise_smiles,detailed_smiles):
+    """
+    Identifies the removed tokens between concise and detailed SMILES strings.
+
+    Args:
+        concise_smiles (str): A concise SMILES string representing a molecule.
+        detailed_smiles (str): A detailed SMILES string representing the same molecule with more information.
+
+    Returns:
+        list: A list of tokens removed in the transition from concise to detailed SMILES.
+    """
     detailed_smiles_length = len(detailed_smiles)
     idx = 0
     rm_token_lis = []
@@ -2116,6 +2359,16 @@ def get_rm_token_lis(concise_smiles,detailed_smiles):
     
     
 def get_bond_token_lis(detailed_smiles):
+    """
+    Extracts bond tokens from a detailed SMILES string.
+
+    Args:
+        detailed_smiles (str): A detailed SMILES string representing a molecule.
+
+    Returns:
+        list: A list where bond tokens ('-', '=', '#', ':', '/', '\\') are retained, 
+              and other characters are replaced with a space (' ').
+    """
     bond_token_lis = []
 
     for i in range(len(detailed_smiles)):
@@ -2130,6 +2383,17 @@ def get_bond_token_lis(detailed_smiles):
 
 
 def get_bond_token_idx_dic(bond_token_lis):
+    """
+    Maps bond indices to their positions in the bond token list.
+
+    Args:
+        bond_token_lis (list): A list where bond tokens are retained, 
+                                and other characters are replaced with spaces.
+
+    Returns:
+        dict: A dictionary where keys are bond indices, and values are their respective positions 
+              in the bond token list.
+    """
     bond_token_idx_dic = {}
     bond_idx = 0
     token_idx = 0
@@ -2163,6 +2427,18 @@ def get_caption_r(caption):
 
 
 def get_b_smiles_detailed_smiles(caption_r,smiles):
+    """
+    Generates a modified version of SMILES (`b_smiles`) and its detailed SMILES representation.
+    
+    Args:
+        caption_r (str): The caption SMILES string to modify.
+        smiles (str): The original SMILES string for the molecule.
+    
+    Returns:
+        tuple: A tuple containing:
+            - `b_smiles`: The modified version of the input caption SMILES.
+            - `detailed_smiles`: The detailed SMILES with all bonds explicitly represented.
+    """
     b_smiles = caption_r
     
     b_smiles = b_smiles.replace('/','/-').replace('\\','\\-')  
@@ -2218,7 +2494,21 @@ def get_t_smiles(e_smiles,o_smiles):
 
 
 def get_b_smiles(p_b):
-
+    """
+    This function processes a given set of molecular edits and generates a new SMILES string.
+    
+    Parameters:
+    p_b (list): A list containing the following elements:
+        - p_b[0] (str): The original SMILES string.
+        - p_b[1] (list): A list of core edit operations (e.g., bond changes).
+        - p_b[2] (list): A list of chain edit operations (e.g., chirality changes).
+        - p_b[3] (list): A list of stereochemical edits (e.g., cis-trans isomerization).
+        - p_b[4] (list): A list of charge edits (e.g., charge changes).
+        - p_b[5] (list): A list of additional core edits.
+    
+    Returns:
+    str: The updated SMILES string after applying all the edits.
+    """
     o_smiles = p_b[0]
     core_edits = p_b[1]     
     chai_edits =  p_b[2]
@@ -2941,7 +3231,17 @@ for l in range(3,0,-1):
             
             
 def iso_to_symbo(txt,dic_num_to_str):
+    """
+    This function converts numbers in the input string to their corresponding symbols 
+    based on the provided dictionary.
 
+    Parameters:
+    txt (str): The input string that contains numbers to be replaced by symbols.
+    dic_num_to_str (dict): A dictionary mapping numbers (as strings) to their corresponding symbols.
+
+    Returns:
+    str: The modified string where numbers are replaced by the corresponding symbols.
+    """
     for i,j in dic_num_to_str.items():
         i = '[' + i
         j = '[' + j
@@ -2950,7 +3250,17 @@ def iso_to_symbo(txt,dic_num_to_str):
     return txt
 
 def symbo_to_iso(txt,dic_str_to_num):
+    """
+    This function converts symbols in the input string to their corresponding numbers
+    based on the provided dictionary.
 
+    Parameters:
+    txt (str): The input string that contains symbols to be replaced by numbers.
+    dic_str_to_num (dict): A dictionary mapping symbols to their corresponding numbers (as strings).
+
+    Returns:
+    str: The modified string where symbols are replaced by the corresponding numbers.
+    """
     for i,j in dic_str_to_num.items():
         i = '[' + i
         j = '[' + j
@@ -2961,7 +3271,23 @@ def symbo_to_iso(txt,dic_str_to_num):
 
 
 def merge_smiles_only(text):
+    """
+    Processes the input text containing SMILES and reaction data to merge SMILES strings 
+    and apply backward transformations, including atom and leaving group edits.
 
+    Steps:
+    1. Converts symbols to isotopes.
+    2. Extracts original and backward SMILES.
+    3. Retrieves leaving group information.
+    4. Applies backward reaction transformations.
+    5. Returns the transformed SMILES string.
+
+    Parameters:
+    text (str): Input string with SMILES and reaction details.
+
+    Returns:
+    str: Transformed SMILES after applying all backward transformations.
+    """
 
     text = symbo_to_iso(text,dic_str_to_num)
     o_smiles = text.split('>>>')[0]
@@ -2996,7 +3322,15 @@ def merge_smiles(text):
     
     
 def get_e_smiles(rxn):
+    """
+    Generates a ReactSeq representation from the input reaction string.
 
+    Parameters:
+    rxn (str): Input reaction string.
+
+    Returns:
+    str: ReactSeq representation.
+    """
     p_b = run_get_p_b_l_forward(rxn)
     b_smiles = get_b_smiles_check(p_b)
     lg_lis = get_lg_forward(p_b[1],p_b[6])
