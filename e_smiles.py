@@ -850,192 +850,6 @@ def apply_charge_change(mol,charge_edits):
         mol.GetAtomWithIdx(amap[int(x)]).SetFormalCharge(int(new_charge))
     return mol
 
-def get_chai_edit_mine(reac_mol, prod_mol):  
-    """
-    Identifies changes in chirality centers between reactant and product molecules.
-
-    Parameters
-    ----------
-    reac_mol : Chem.Mol
-        The reactant molecule.
-    prod_mol : Chem.Mol
-        The product molecule.
-
-    Returns
-    -------
-    chai_edits : list of str
-        A list of chirality edits, where each edit is formatted as 
-        'atom_map_number:0:0:chirality_change'. The edits represent changes in the 
-        chirality assignment of atoms during the reaction.
-    """
-    reac_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in reac_mol.GetAtoms()}
-    prod_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in prod_mol.GetAtoms()}
-    
-    reac_ChiralCenters = []
-    for ChiralCenters in Chem.FindMolChiralCenters(reac_mol,includeUnassigned=True):
-        reac_ChiralCenters.append((reac_map_a[ChiralCenters[0]],ChiralCenters[1]))
-
-    prod_ChiralCenters = []
-    for ChiralCenters in Chem.FindMolChiralCenters(prod_mol,includeUnassigned=True):
-        prod_ChiralCenters.append((prod_map_a[ChiralCenters[0]],ChiralCenters[1]))
-        
-    dict_reac_ChiralCenters = dict(reac_ChiralCenters)
-    dict_prod_ChiralCenters = dict(prod_ChiralCenters)
-    
-    
-    chai_edits = []
-
-    for amap_num,chiral in dict_prod_ChiralCenters.items():
-        if amap_num in dict_reac_ChiralCenters.keys():
-            if chiral != dict_reac_ChiralCenters[amap_num]:
-                edit = f"{amap_num}:{0}:{0}:{dict_reac_ChiralCenters[amap_num]}"
-                chai_edits.append(edit)
-        else:
-            pass
-    
-    for amap_num,chiral in dict_reac_ChiralCenters.items(): 
-        if (amap_num not in dict_prod_ChiralCenters.keys()) and (amap_num in prod_map_a.values()) and chiral != '?':
-            edit = f"{amap_num}:{0}:{0}:{chiral}"
-            chai_edits.append(edit)
-        
-    return chai_edits
-
-
-
-
-def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):   
-    """
-    Identifies leaving groups (LG) and their associated connection points 
-    based on molecular fragments, reactants, and the product molecule.
-
-    Parameters:
-    frag_mols (list): A list of molecular fragments representing the products of bond breaking.
-    reac_mols (list): A list of reactant molecules participating in the reaction.
-    core_edits (list): A list of core edits, defining changes at the reaction center.
-    prod_mol (Mol): The product molecule resulting from the reaction.
-
-    Returns:
-    list: A list of tuples representing the leaving groups and their connection points.
-        Each tuple contains:
-        - The SMILES string of the leaving group.
-        - A list of atom map numbers indicating the connection points in the product molecule.
-    """
-    lg_map_lis = []
-    prod_map_num_lis = [i.GetAtomMapNum() for i in prod_mol.GetAtoms()]
-    
-    for frag_mols_1,reac_mols_1 in zip(frag_mols[:],reac_mols[:]):
-        reac_edits = find_reac_edit(frag_mols_1,reac_mols_1,core_edits)  
-        
-
-        reac_edits_a = []
-        reac_edits_b = []
-        for reac_edit in reac_edits:
-            if reac_edit[:3] == '0:0': 
-                reac_edits_a.append(reac_edit)
-            elif reac_edit[-7:] == '0.0:0.0':    
-                reac_edits_a.append(reac_edit)
-            elif reac_edit[-10:] == '0:0.0:-1.0':   
-                reac_edits_a.append(reac_edit)
-            elif reac_edit[-9:] == '0:0.0:1.0':    
-                reac_edits_a.append(reac_edit)
-            else:
-                reac_edits_b.append(reac_edit)
-        
-
-        for reac_edit in reac_edits_a:
-            if reac_edit[:3] == '0:0':  
-                pass
-            elif reac_edit[-7:] == '0.0:0.0':
-                pass
-            elif reac_edit[-10:] == '0:0.0:-1.0':
-                edit_map_num_lis = reac_edit.split(':')[:2]
-                attach_map_num_1 = [int(i) for i in edit_map_num_lis if int(i) in prod_map_num_lis] 
-                lg_smiles = '-1.0'
-                lg_map_lis.append((lg_smiles,attach_map_num_1))
-            elif reac_edit[-9:] == '0:0.0:1.0':
-                edit_map_num_lis = reac_edit.split(':')[:2]
-                attach_map_num_1 = [int(i) for i in edit_map_num_lis if int(i) in prod_map_num_lis] 
-                lg_smiles = '1.0'
-                lg_map_lis.append((lg_smiles,attach_map_num_1))
-        
-
-        frag_1_map_num_lis = [i.GetAtomMapNum() for i in frag_mols_1.GetAtoms() if i.GetAtomMapNum() != 0]
-        reac_frag_mol = apply_edits_to_mol_break(reac_mols_1 , reac_edits_b)
-        reac_frag_mols = Chem.GetMolFrags(reac_frag_mol,asMols=True,sanitizeFrags = False)
-        
-        
-        reac_edit_added = []
-        for reac_frag_mol in reac_frag_mols[:]:
-
-            reac_frag_map_num_lis = [i.GetAtomMapNum() for i in reac_frag_mol.GetAtoms() if i.GetAtomMapNum() != 0]
-
-            if set(reac_frag_map_num_lis) == set(frag_1_map_num_lis): 
-                pass
-            else:
-                attach_map_num_1 = []          
-                for reac_edit in reac_edits:    
-                    if reac_edit in reac_edit_added:
-                        continue
-                    else:
-                        pass
-
-                    
-                    b,e = int(reac_edit.split(':')[0]),int(reac_edit.split(':')[1]) 
-                    if e in reac_frag_map_num_lis and b in frag_1_map_num_lis:
-
-                        for atom in reac_frag_mol.GetAtoms():  
-                            if atom.GetAtomMapNum() == int(e):
-                                atom.SetAtomMapNum(500+atom.GetAtomMapNum())
-                                break 
-                            else:
-                                pass
-                        reac_edit_added.append(reac_edit)
-                        
-                        
-                      
-                        if len(attach_map_num_1) == 1:
-
-                            if [str(attach_map_num_1[0]),str(atom.GetAtomMapNum()-500)] in [i.split(':')[:2] for i in reac_edits ]: #上一个合成子上的连接点和本离去基团的连接点配对
-                                if atom.GetAtomMapNum() == max([i.GetAtomMapNum() for i in reac_frag_mol.GetAtoms()]):
-                                    attach_map_num_1 = [b] + attach_map_num_1
-                                else:
-                                    attach_map_num_1.append(b)
-                            else: 
-                                if atom.GetAtomMapNum() == max([i.GetAtomMapNum() for i in reac_frag_mol.GetAtoms()]):
-                                    attach_map_num_1.append(b)
-                                else:
-                                    attach_map_num_1 = [b] + attach_map_num_1
-                        elif len(attach_map_num_1) == 0:
-                            attach_map_num_1.append(b)
-                            
-
-                    else:
-                        pass
-                        
-                    if reac_frag_mol.GetAtomWithIdx(0).GetAtomicNum() == 1 and len(attach_map_num_1) == 1:  
-                        break
-
-                
-                lg_smiles = Chem.MolToSmiles(reac_frag_mol,kekuleSmiles = True) 
-                lg = Chem.MolFromSmiles(lg_smiles)
-                Chem.Kekulize(lg)
-                for atom in lg.GetAtoms():
-                    if atom.GetAtomMapNum() >= 500:
-                        atom.SetAtomMapNum(1)
-                        pass
-                    else:
-                        atom.SetAtomMapNum(0)
-                lg_smiles = Chem.MolToSmiles(lg,canonical = False,kekuleSmiles = True)           
-                
-                if attach_map_num_1 != []:
-                    lg_map_lis.append((lg_smiles,attach_map_num_1))
-                    
-    return lg_map_lis
-
-
-
-
-
 
 def get_core_edit_mine(reac_mol, prod_mol):
     """
@@ -1096,8 +910,6 @@ def get_core_edit_mine(reac_mol, prod_mol):
                 edit = f"{a_start}:{a_end}:{0.0}:{reac_bo}"
                 core_edits.append(edit)
                 rxn_core.update([a_start, a_end])
-                
-
 
     reac_amap = {atom.GetAtomMapNum(): atom.GetIdx() for atom in reac_mol.GetAtoms()}
 
@@ -1114,7 +926,6 @@ def get_core_edit_mine(reac_mol, prod_mol):
                 core_edits.append(edit)
                 rxn_core.add(amap_num)
                 
-                
     for atom in prod_mol.GetAtoms():
         amap_num = atom.GetAtomMapNum()
         if amap_num in rxn_core:
@@ -1129,10 +940,6 @@ def get_core_edit_mine(reac_mol, prod_mol):
                 core_edits.append(edit)
                 rxn_core.add(amap_num)
                     
-    
-    
-    
-    
     return core_edits
 
 
@@ -1156,13 +963,11 @@ def find_reac_edit(frag_mols_1,reac_mols_1,core_edits):
         elif float(core_edit_[2]) - float(core_edit_[3]) > 0 and int(core_edit_[0]) in frag_mol_map_num:
             attach_map_num = int(core_edit_[0])
             
-
         else:
             continue
 
         if str(attach_map_num) != '0' and str(attach_map_num) != core_edit_[0]: 
             continue
-        
         
         frag_mols_1_amap = {atom.GetAtomMapNum(): atom.GetIdx() for atom in frag_mols_1.GetAtoms()}
         reac_mols_1_amap = {atom.GetAtomMapNum(): atom.GetIdx() for atom in reac_mols_1.GetAtoms()}
@@ -1173,7 +978,6 @@ def find_reac_edit(frag_mols_1,reac_mols_1,core_edits):
         frag_attach_charge = frag_mols_1.GetAtomWithIdx(frag_mols_1_amap[attach_map_num]).GetFormalCharge()
         reac_attach_charge = reac_mols_1.GetAtomWithIdx(reac_mols_1_amap[attach_map_num]).GetFormalCharge()
         
-        
         if lg_map_num != []:
             for bond in reac_mols_1.GetBonds():
                 EndMapNum = bond.GetEndAtom().GetAtomMapNum()
@@ -1183,11 +987,8 @@ def find_reac_edit(frag_mols_1,reac_mols_1,core_edits):
                 elif (EndMapNum == attach_map_num) and (BeginMapNum in lg_map_num):
                     reac_edit.append("{}:{}:{}:{}".format(EndMapNum,BeginMapNum,bond.GetBondTypeAsDouble(),0.0))
 
-
-    
         elif lg_map_num == []:
 
-            
             if Chem.MolToSmiles(reac_mols_1) == Chem.MolToSmiles(frag_mols_1):
                 reac_edit.append("{}:{}:{}:{}".format(attach_map_num,0,0.0,0.0))  
             if (reac_attach_H - frag_attach_H) == 1 and (reac_attach_charge - frag_attach_charge) == 0:
@@ -1203,26 +1004,35 @@ def find_reac_edit(frag_mols_1,reac_mols_1,core_edits):
             if "{}:{}:{}:{}".format(attach_map_num,0,0.0,1.0) not in reac_edit:
                 reac_edit.append("{}:{}:{}:{}".format(attach_map_num,0,0.0,1.0))  
                 
-
         if (reac_attach_charge - frag_attach_charge) == 2:
             if "{}:{}:{}:{}".format(attach_map_num,0,0.0,2.0) not in reac_edit:
                 reac_edit.append("{}:{}:{}:{}".format(attach_map_num,0,0.0,2.0))  
 
-                
-
     return reac_edit
 
 
-
-
 def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):   
-    
+    """
+    Identifies leaving groups (LG) and their associated connection points 
+    based on molecular fragments, reactants, and the product molecule.
+
+    Parameters:
+    frag_mols (list): A list of molecular fragments representing the products of bond breaking.
+    reac_mols (list): A list of reactant molecules participating in the reaction.
+    core_edits (list): A list of core edits, defining changes at the reaction center.
+    prod_mol (Mol): The product molecule resulting from the reaction.
+
+    Returns:
+    list: A list of tuples representing the leaving groups and their connection points.
+        Each tuple contains:
+        - The SMILES string of the leaving group.
+        - A list of atom map numbers indicating the connection points in the product molecule.
+    """
     lg_map_lis = []
     prod_map_num_lis = [i.GetAtomMapNum() for i in prod_mol.GetAtoms()]
     
     for frag_mols_1,reac_mols_1 in zip(frag_mols[:],reac_mols[:]):
         reac_edits = find_reac_edit(frag_mols_1,reac_mols_1,core_edits)  
-        
 
         reac_edits_a = []
         reac_edits_b = []
@@ -1242,7 +1052,6 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
             else:
                 reac_edits_b.append(reac_edit)
         
-  
         for reac_edit in reac_edits_a:
             if reac_edit[:3] == '0:0':  
                 pass
@@ -1286,7 +1095,6 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
                     else:
                         pass
 
-                    
                     b,e = int(reac_edit.split(':')[0]),int(reac_edit.split(':')[1]) 
                     if e in reac_frag_map_num_lis and b in frag_1_map_num_lis:
 
@@ -1297,8 +1105,6 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
                             else:
                                 pass
                         reac_edit_added.append(reac_edit)
-                        
-                        
 
                         if len(attach_map_num_1) == 1:
 
@@ -1314,15 +1120,12 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
                                     attach_map_num_1 = [b] + attach_map_num_1
                         elif len(attach_map_num_1) == 0:
                             attach_map_num_1.append(b)
-                            
-
                     else:
                         pass
                         
                     if reac_frag_mol.GetAtomWithIdx(0).GetAtomicNum() == 1 and len(attach_map_num_1) == 1:  
                         break
-
-                
+      
                 lg_smiles = Chem.MolToSmiles(reac_frag_mol,kekuleSmiles = True)  
                 lg = Chem.MolFromSmiles(lg_smiles)
                 Chem.Kekulize(lg)
@@ -1342,6 +1145,23 @@ def get_lg_map_lis(frag_mols,reac_mols,core_edits,prod_mol):
 
 
 def get_chai_edit_mine(reac_mol, prod_mol):    
+    """
+    Identifies changes in chirality centers between reactant and product molecules.
+
+    Parameters
+    ----------
+    reac_mol : Chem.Mol
+        The reactant molecule.
+    prod_mol : Chem.Mol
+        The product molecule.
+
+    Returns
+    -------
+    chai_edits : list of str
+        A list of chirality edits, where each edit is formatted as 
+        'atom_map_number:0:0:chirality_change'. The edits represent changes in the 
+        chirality assignment of atoms during the reaction.
+    """
     reac_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in reac_mol.GetAtoms()}
     prod_map_a = {atom.GetIdx(): atom.GetAtomMapNum() for atom in prod_mol.GetAtoms()}
     
@@ -1402,9 +1222,6 @@ def get_original_chair_edit(p,b):
             out.append('{}:0:0:{}'.format(i+1,j))
     return out
 
-
-
-
 def apply_chirality_change(prod_mol,chai_edits):
     p_amap_idx =  {atom.GetAtomMapNum(): atom.GetIdx() for atom in prod_mol.GetAtoms()}
     prod_mol = copy.deepcopy(prod_mol)
@@ -1437,16 +1254,12 @@ def apply_chirality_change(prod_mol,chai_edits):
     return  prod_mol
 
 
-
-
 def get_chair_dict_without_atom_map(temp_p):
     temp_p = copy.deepcopy(temp_p)
     for atom in temp_p.GetAtoms():
         atom.SetAtomMapNum(0)
     temp_dic = dict(Chem.FindMolChiralCenters(Chem.MolFromMolBlock(Chem.MolToMolBlock(temp_p)),includeUnassigned=True))
     return temp_dic
-
-
 
 def run_get_p_b_l(rxn_smi):
     """
@@ -1468,7 +1281,6 @@ def run_get_p_b_l(rxn_smi):
             return 'error type 3'
         else:
             pass
-         
 
         r,p = cano_smiles_map(r),cano_smiles_map(p) 
 
@@ -1492,8 +1304,6 @@ def run_get_p_b_l(rxn_smi):
                 Chem.Kekulize(reac_mol)
                 Chem.Kekulize(prod_mol)
 
-
-
         core_edits_add = [i for i in core_edits if (float(i.split(':')[2]) == 0) and (float(i.split(':')[1]) != 0)]
 
         core_edits = [i for i in core_edits if i not in core_edits_add]
@@ -1506,21 +1316,16 @@ def run_get_p_b_l(rxn_smi):
 
         stereo_edits = get_stereo_edit_mine(Chem.MolFromSmiles(r), Chem.MolFromSmiles(p))
 
-        
-
         charge_edits = get_charge_edit_mine(reac_mol, prod_mol,core_edits) 
-
 
         o_p_Chiral_dic = get_atom_map_chai_dic(Chem.MolFromSmiles(p)) 
         o_p_Stereo_dic = get_atom_map_stereo_dic(Chem.MolFromSmiles(p))
-
 
         frag_mol = apply_edits_to_mol_break(prod_mol,edit_b)
         frag_mol = apply_edits_to_mol_change(frag_mol,edit_c)
 
         frag_mol = apply_edits_to_mol_connect(frag_mol, core_edits_add)   
         frag_mol = remove_s_H(frag_mol)
-
 
         reac_mols = Chem.GetMolFrags(reac_mol,asMols=True,sanitizeFrags = False)
         frag_mols = Chem.GetMolFrags(frag_mol,asMols=True,sanitizeFrags = False)
@@ -1535,12 +1340,10 @@ def run_get_p_b_l(rxn_smi):
         else:
             pass
 
-
         if len(reac_mols) == len(frag_mols):
             reac_mols, frag_mols = map_reac_and_frag(reac_mols,frag_mols)
         else:
             print('error type 0')
-
 
         lg_map_lis_temp = get_lg_map_lis(frag_mols[:],reac_mols[:],core_edits,prod_mol)
 
@@ -1568,10 +1371,7 @@ def run_get_p_b_l(rxn_smi):
             else:
                 lg_map_lis.append((lg, map_ ))
 
-
         total_mol = frag_mol
-
-
 
         for lg_smile,map_nums in lg_map_lis[:]:
 
@@ -1617,9 +1417,6 @@ def run_get_p_b_l(rxn_smi):
                         atom = total_mol.GetAtomWithIdx(amap[lg_map]) 
                         is_multi_bond= 1  
 
-
-
-
                     if atom.GetSymbol()  == 'O' and atom.GetTotalValence()  == 0 and atom.GetFormalCharge()  == 0 and is_multi_bond == 0:
                         bond_float = 2.0
                     elif atom.GetSymbol()  == 'S' and atom.GetTotalValence()  in [0,2,4] and atom.GetFormalCharge()  == 0 and is_multi_bond == 0:
@@ -1646,22 +1443,14 @@ def run_get_p_b_l(rxn_smi):
                         bond_float = 2.0
                     elif atom.GetSymbol()  == 'O' and atom.GetTotalValence()  == 1 and atom.GetFormalCharge()  == 1  and is_multi_bond == 0:
                         bond_float = 2.0
-
-      
                     elif atom.GetSymbol()  == 'N' and atom.GetTotalValence()  == 0 and atom.GetFormalCharge()  == 0  and is_multi_bond == 0:
                         bond_float = 3.0
                     elif atom.GetSymbol()  == 'C' and atom.GetTotalValence()  == 1 and atom.GetFormalCharge()  == 0  and is_multi_bond == 0:
                         bond_float = 3.0
                     elif atom.GetSymbol()  == 'C' and atom.GetTotalValence()  == 0 and atom.GetFormalCharge()  == -1  and is_multi_bond == 0:
                         bond_float = 3.0
-
-
-
-
                     else:
-
                         bond_float = 1.0
-
 
                     new_mol.AddBond(amap[map_num],amap[lg_map],BOND_FLOAT_TO_TYPE[bond_float])
                 total_mol = new_mol.GetMol()
@@ -1674,7 +1463,6 @@ def run_get_p_b_l(rxn_smi):
                 atom = total_mol.GetAtomWithIdx(amap[map_num])
                 atom.SetNumRadicalElectrons(0)
                 atom.SetFormalCharge(int(atom.GetFormalCharge()+float(lg_smile)))
-
 
         total_mol = correct_mol_1(total_mol,is_nitrine_c = True)
 
@@ -1702,9 +1490,6 @@ def run_get_p_b_l(rxn_smi):
         if act == 1:
             pass
 
-
-
-
         for b_map,Stereo in b_Stereo_dic.items(): 
             if b_map not in o_p_Stereo_dic.keys():
                 pass
@@ -1717,33 +1502,23 @@ def run_get_p_b_l(rxn_smi):
 
         if chai_edits == []:
             o_chai_edits = get_original_chair_edit(p,b)
-
-
             b = apply_chirality_change(b,o_chai_edits)
 
         else:
             b = apply_chirality_change(b,chai_edits)
 
-        
-        
         b = Chem.MolFromSmiles(Chem.MolToSmiles(b,canonical = False)) 
-        
         b = apply_stereo_change(b,stereo_edits)
-
-
 
         for atom in b.GetAtoms():
             atom.SetAtomMapNum(0)
 
-
         for bond in b.GetBonds():
-
             if bond.GetStereo() == Chem.rdchem.BondStereo.STEREONONE:
 
                 bond.SetStereo(Chem.rdchem.BondStereo.STEREOANY)
             else:
                 pass
-
 
         pre_smiles = Chem.MolToSmiles(b)
 
@@ -1756,12 +1531,8 @@ def run_get_p_b_l(rxn_smi):
         for atom in reac_mol.GetAtoms():
             atom.SetAtomMapNum(0)
         reac_mol_smiles = Chem.MolToSmiles(reac_mol)
-
         reac_mol_smiles = Chem.MolToSmiles(Chem.MolFromSmiles(reac_mol_smiles))
         
-        
-
-
         if [float(i[-3:]) for i in core_edits_add] == []:
             max_add = 0
         elif max([float(i[-3:]) for i in core_edits_add]) == 1:
@@ -1778,14 +1549,9 @@ def run_get_p_b_l(rxn_smi):
             print(pre_smiles,reac_mol_smiles,chai_edits,stereo_edits)
             return 'error type 1'
 
-        
-     
-    
     except:
         print('error type 2')
         return 'error type 2'
-
-
 
 def run_get_p_b_l_forward(rxn_smi):
     try:
@@ -1797,11 +1563,9 @@ def run_get_p_b_l_forward(rxn_smi):
         else:
             pass
          
-
         r,p = cano_smiles_map(r),cano_smiles_map(p) 
         reac_mol, prod_mol = align_kekule_pairs(r, p)   
         reac_mol = Chem.MolFromSmiles(Chem.MolToSmiles(reac_mol,kekuleSmiles = True),sanitize = False)
-
 
         reac_smiles_temp = Chem.MolToSmiles(reac_mol,kekuleSmiles = True)
         reac_mol_temp = Chem.MolFromSmiles(reac_smiles_temp)
@@ -1819,13 +1583,9 @@ def run_get_p_b_l_forward(rxn_smi):
                 Chem.Kekulize(reac_mol)
                 Chem.Kekulize(prod_mol)
 
-
-
-
         core_edits= get_core_edit_mine(reac_mol,prod_mol) 
         core_edits_add = [i for i in core_edits if (float(i.split(':')[2]) == 0) and (float(i.split(':')[1]) != 0)]
         core_edits = [i for i in core_edits if i not in core_edits_add]
-
 
         edit_c = [i for i in core_edits if (float(i.split(':')[-1]) > 0)]
         edit_b = [i for i in core_edits if (float(i.split(':')[-1]) == 0)]
@@ -1834,10 +1594,8 @@ def run_get_p_b_l_forward(rxn_smi):
         stereo_edits = get_stereo_edit_mine(Chem.MolFromSmiles(r), Chem.MolFromSmiles(p))
         charge_edits = get_charge_edit_mine(reac_mol, prod_mol,core_edits)  
 
-
         o_p_Chiral_dic = get_atom_map_chai_dic(Chem.MolFromSmiles(p))  
         o_p_Stereo_dic = get_atom_map_stereo_dic(Chem.MolFromSmiles(p))
-
 
         frag_mol = apply_edits_to_mol_break(prod_mol,edit_b)
         frag_mol = apply_edits_to_mol_change(frag_mol,edit_c)
@@ -1863,10 +1621,7 @@ def run_get_p_b_l_forward(rxn_smi):
         if len(reac_mols) == len(frag_mols):
             reac_mols, frag_mols = map_reac_and_frag(reac_mols,frag_mols)
         else:
-
             pass
-
-
 
         lg_map_lis_temp = get_lg_map_lis(frag_mols[:],reac_mols[:],core_edits,prod_mol)
 
@@ -1891,15 +1646,9 @@ def run_get_p_b_l_forward(rxn_smi):
                 lg_map_lis.append((lg_smiles,map_new))
             else:
                 lg_map_lis.append((lg, map_ ))
-
-
-
-
+                
         return ([p,core_edits,chai_edits,stereo_edits,charge_edits,core_edits_add,lg_map_lis])
 
-        
-     
-    
     except:
         return 'error type 2'
 
@@ -1913,10 +1662,8 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
         edit_c = [i for i in core_edits if (float(i.split(':')[-1]) > 0)]
         edit_b = [i for i in core_edits if (float(i.split(':')[-1]) == 0)]
 
-
         o_p_Chiral_dic = get_atom_map_chai_dic(Chem.MolFromSmiles(p))  #
         o_p_Stereo_dic = get_atom_map_stereo_dic(Chem.MolFromSmiles(p))
-
 
         frag_mol = apply_edits_to_mol_break(prod_mol,edit_b)
         frag_mol = apply_edits_to_mol_change(frag_mol,edit_c)
@@ -1924,10 +1671,7 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
         frag_mol = apply_edits_to_mol_connect(frag_mol, core_edits_add)   
         frag_mol = remove_s_H(frag_mol)
 
-
-
         total_mol = frag_mol
-
 
         for lg_smile,map_nums in lg_map_lis[:]:
 
@@ -1973,7 +1717,6 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
                         atom = total_mol.GetAtomWithIdx(amap[lg_map])  
                         is_multi_bond= 1  
 
-
                     if atom.GetSymbol()  == 'O' and atom.GetTotalValence()  == 0 and atom.GetFormalCharge()  == 0 and is_multi_bond == 0:
                         bond_float = 2.0
                     elif atom.GetSymbol()  == 'S' and atom.GetTotalValence()  in [0,2,4] and atom.GetFormalCharge()  == 0 and is_multi_bond == 0:
@@ -2000,8 +1743,6 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
                         bond_float = 2.0
                     elif atom.GetSymbol()  == 'O' and atom.GetTotalValence()  == 1 and atom.GetFormalCharge()  == 1  and is_multi_bond == 0:
                         bond_float = 2.0
-
-
                     elif atom.GetSymbol()  == 'N' and atom.GetTotalValence()  == 0 and atom.GetFormalCharge()  == 0  and is_multi_bond == 0:
                         bond_float = 3.0
                     elif atom.GetSymbol()  == 'C' and atom.GetTotalValence()  == 1 and atom.GetFormalCharge()  == 0  and is_multi_bond == 0:
@@ -2011,13 +1752,10 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
                     else:
 
                         bond_float = 1.0
-
-
                     new_mol.AddBond(amap[map_num],amap[lg_map],BOND_FLOAT_TO_TYPE[bond_float])
                 total_mol = new_mol.GetMol()
 
             else:
-
                 map_num = map_nums[0]
 
                 amap = {atom.GetAtomMapNum(): atom.GetIdx() for atom in total_mol.GetAtoms()}
@@ -2051,9 +1789,6 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
         if act == 1:
             pass
  
-
-
-
         for b_map,Stereo in b_Stereo_dic.items(): 
             if b_map not in o_p_Stereo_dic.keys():
                 pass
@@ -2066,23 +1801,16 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
 
         if chai_edits == []:
             o_chai_edits = get_original_chair_edit(p,b)
-
-
             b = apply_chirality_change(b,o_chai_edits)
-
         else:
             b = apply_chirality_change(b,chai_edits)
-
         
         b = Chem.MolFromSmiles(Chem.MolToSmiles(b,canonical = False))  
         b = apply_stereo_change(b,stereo_edits)
 
-
-
         for atom in b.GetAtoms():
             atom.SetAtomMapNum(0)
-
-
+            
         for bond in b.GetBonds():
 
             if bond.GetStereo() == Chem.rdchem.BondStereo.STEREONONE:
@@ -2090,14 +1818,13 @@ def run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,cor
                 bond.SetStereo(Chem.rdchem.BondStereo.STEREOANY)
             else:
                 pass
-
+                
         pre_smiles = Chem.MolToSmiles(b)
         pre_smiles = pre_smiles.replace('[H]/C=C/','C=C').replace('[H]/C=C(\\','C=C(').replace('[H]/C=C(/','C=C(').replace('[MgH2]','[Mg]').replace('/C=N\\','C=C')
         pre_smiles = Chem.MolToSmiles(Chem.MolFromSmiles(pre_smiles))
         return pre_smiles
-    
-    
-    
+
+
 def run_get_p_b_l_check(rxn):
     try:
         p,core_edits,chai_edits,stereo_edits,charge_edits,core_edits_add,lg_map_lis =  run_get_p_b_l_forward(rxn)
@@ -2131,10 +1858,6 @@ def run_get_p_b_l_check(rxn):
 
     else:
         return 'error type 4'
-        
-        
-
-        
         
 
 def get_atom_pair_bond_idx_dic(concise_smiles):
@@ -2170,8 +1893,6 @@ def get_atom_pair_bond_idx_dic(concise_smiles):
         count += 1
         
     return atom_pair_bond_idx_dic
-
-
 
 
 def get_rm_token_lis(concise_smiles,detailed_smiles):
@@ -2373,8 +2094,6 @@ def get_b_smiles(p_b):
             else:
                 pass
 
-
-
     for edit in chai_edits:
 
         edit_l = edit.split(':')
@@ -2435,9 +2154,6 @@ def get_b_smiles(p_b):
             atom_idx_mark_dic[int(edit_l[1])] = 100 + atom_idx_mark_dic[int(edit_l[1])]
 
 
-                
-                
-
     a = Chem.MolFromSmiles(o_smiles,sanitize = False)
 
     for atom in a.GetAtoms():
@@ -2450,9 +2166,7 @@ def get_b_smiles(p_b):
 
     mol = copy.deepcopy(a)
 
-
     detailed_smiles = Chem.MolToSmiles(mol,canonical = False,allBondsExplicit = True,kekuleSmiles=True)  
-
 
     concise_smiles = Chem.MolToSmiles(mol,canonical = False,kekuleSmiles=True)                
     concise_smiles_no_chirality = Chem.MolToSmiles(mol,canonical = False,isomericSmiles = False,kekuleSmiles=True)      
@@ -2511,8 +2225,6 @@ def get_b_smiles(p_b):
         else:
             pass        
 
-
-
     for bond_idx,mark in bond_idx_mark_dic.items():
         token_idx = bond_token_idx_dic[bond_idx]
         rm_token_lis[token_idx] = mark
@@ -2529,25 +2241,17 @@ def get_b_smiles(p_b):
     caption = ''.join(new_smiles_lis)
     out_b_smiles_lis.append(caption)
 
-
-
     caption_r = caption 
-
-
 
     t_smiles = get_t_smiles(caption_r,o_smiles)
 
     b_smiles,detailed_smiles = get_b_smiles_detailed_smiles(caption_r,t_smiles)
 
-
     bond_dic = get_bond_dic(b_smiles,detailed_smiles)
-
 
     atom_pair_bond_idx = {}
     for atom_pair,bond_idx in get_atom_pair_bond_idx_dic(o_smiles).items():
         atom_pair_bond_idx[bond_idx] = atom_pair
-
-
 
     mol = Chem.MolFromSmiles(t_smiles)
     Chem.Kekulize(mol)
@@ -2572,15 +2276,12 @@ def get_b_smiles(p_b):
         elif mark == '^':
             n_bond = '3.0'
             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-
         elif mark == '&':
             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'a'))
         elif mark == '{':
             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'e'))      
         elif mark == '}':
             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))   
-
-
         elif mark == '。': 
             n_bond = '2.0'
             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
@@ -2593,7 +2294,6 @@ def get_b_smiles(p_b):
             n_bond = '2.0'
             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))
-
 
     
     core_edits_add_atom_lis = []
@@ -2617,7 +2317,6 @@ def get_b_smiles(p_b):
         elif s_w == 3:
             chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','?'))
 
-
         if b_w == 2 or b_w == 3:
             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',1))
         elif b_w == 4 or b_w == 5:
@@ -2625,7 +2324,6 @@ def get_b_smiles(p_b):
         elif b_w == 6 or b_w == 7:
             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',-1))    
 
-        
         if b_w % 2 == 1:
             core_edits_add_atom_lis.append(atom.GetIdx()+1)
             
@@ -2896,7 +2594,6 @@ def get_b_smiles_backward(caption_r,o_smiles):
         elif s_w == 3:
             chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','?'))
 
-
         if b_w == 2 or b_w == 3:
             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',1))
         elif b_w == 4 or b_w == 5:
@@ -2912,10 +2609,8 @@ def get_b_smiles_backward(caption_r,o_smiles):
         core_edits_add_.append('{}:{}:{}:{}'.format(core_edits_add_atom_lis[0],core_edits_add_atom_lis[1],'0.0','1.0'))
     else:
         pass
-
     
     return core_edits_,chai_edits_,stereo_edits_,charge_edits_,core_edits_add_
-
 
 
 def get_b_smiles_check(p_b):
@@ -3030,15 +2725,12 @@ def get_lg_backward(core_edits_,lg_lis):
         else:
             pass
     
-    
     lg_map_new_k =[]
     for i,j in lg_map_new:
         if '*' not in i:
             lg_map_new_k.append((i,j)) 
-            
         else:
             pass
-
 
     for i,j in dic_t.items():
         if ':2' not in i:
@@ -3049,11 +2741,8 @@ def get_lg_backward(core_edits_,lg_lis):
             j.reverse()
             lg_map_new_k.append((i.replace('*','').replace(':2',':1'),j))
 
-
     lg_map_new = lg_map_new_k
     return lg_map_new
-    
-
     
     
 dic_str_to_num = {}
@@ -3073,7 +2762,6 @@ for l in range(3,0,-1):
                 if len(str(a+b+c)) == l and len(k+j+i) != 0:
                     dic_num_to_str[str(a+b+c)] = k+j+i
                     
-            
             
 def iso_to_symbo(txt,dic_num_to_str):
     """
@@ -3112,8 +2800,6 @@ def symbo_to_iso(txt,dic_str_to_num):
         txt = txt.replace(i,j)
     txt = txt.replace(';&','。').replace(';}','》').replace(';{','《')
     return txt
-
-
 
 def merge_smiles_only(text):
     """
@@ -3156,7 +2842,6 @@ def merge_smiles_only(text):
     pre_smiles = run_get_p_b_l_backward(p,core_edits,chai_edits,stereo_edits,charge_edits,core_edits_add,lg_map_lis)
     
     return pre_smiles
-
 
 
 def merge_smiles(text):
