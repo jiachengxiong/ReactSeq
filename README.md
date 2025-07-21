@@ -2,7 +2,8 @@
 
 ## :anchor: Environments
 
-Need two virtual environments (```opennmt3``` and ```rdkit2019```)
+Need two virtual environments (```opennmt3``` and ```rdkit2019```).
+The packaged environment has been uploaded to the ```envs``` folder in the [cloud drive](https://pan.baidu.com/s/1ZDzrNHXZO9wCmsOIqx3PJg?pwd=in4v).
 
 ### Environment 1：opennmt3（for training and inferencing）
 
