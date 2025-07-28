@@ -2239,7 +2239,7 @@ def get_b_smiles(p_b):
             pass
 
     caption = ''.join(new_smiles_lis)
-    out_b_smiles_lis.append(caption)
+    #out_b_smiles_lis.append(caption)
 
     caption_r = caption 
 
