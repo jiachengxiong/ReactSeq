@@ -2059,288 +2059,288 @@ def get_t_smiles(e_smiles,o_smiles):
 
 
 
-def get_b_smiles(p_b):
-    """
-    This function processes a given set of molecular edits and generates a new SMILES string.
+# def get_b_smiles(p_b):
+#     """
+#     This function processes a given set of molecular edits and generates a new SMILES string.
     
-    Parameters:
-    p_b (list): A list containing the following elements:
-        - p_b[0] (str): The original SMILES string.
-        - p_b[1] (list): A list of core edit operations (e.g., bond changes).
-        - p_b[2] (list): A list of chain edit operations (e.g., chirality changes).
-        - p_b[3] (list): A list of stereochemical edits (e.g., cis-trans isomerization).
-        - p_b[4] (list): A list of charge edits (e.g., charge changes).
-        - p_b[5] (list): A list of additional core edits.
+#     Parameters:
+#     p_b (list): A list containing the following elements:
+#         - p_b[0] (str): The original SMILES string.
+#         - p_b[1] (list): A list of core edit operations (e.g., bond changes).
+#         - p_b[2] (list): A list of chain edit operations (e.g., chirality changes).
+#         - p_b[3] (list): A list of stereochemical edits (e.g., cis-trans isomerization).
+#         - p_b[4] (list): A list of charge edits (e.g., charge changes).
+#         - p_b[5] (list): A list of additional core edits.
     
-    Returns:
-    str: The updated SMILES string after applying all the edits.
-    """
-    o_smiles = p_b[0]
-    core_edits = p_b[1]     
-    chai_edits =  p_b[2]
-    stereo_edits =  p_b[3]
-    charge_edits =  p_b[4]
-    core_edits_add =  p_b[5]
-    atom_idx_mark_dic = {}   
+#     Returns:
+#     str: The updated SMILES string after applying all the edits.
+#     """
+#     o_smiles = p_b[0]
+#     core_edits = p_b[1]     
+#     chai_edits =  p_b[2]
+#     stereo_edits =  p_b[3]
+#     charge_edits =  p_b[4]
+#     core_edits_add =  p_b[5]
+#     atom_idx_mark_dic = {}   
 
-    for edit in core_edits:
-        b = int(edit.split(':')[0])
-        e = int(edit.split(':')[1])
-        new_b = edit.split(':')[3]
-        if min([b,e]) == 0:
-            atom_map = max([b,e])
-            if new_b == '0.0':
-                atom_idx_mark_dic[atom_map] = 9 
-            else:
-                pass
+#     for edit in core_edits:
+#         b = int(edit.split(':')[0])
+#         e = int(edit.split(':')[1])
+#         new_b = edit.split(':')[3]
+#         if min([b,e]) == 0:
+#             atom_map = max([b,e])
+#             if new_b == '0.0':
+#                 atom_idx_mark_dic[atom_map] = 9 
+#             else:
+#                 pass
 
-    for edit in chai_edits:
+#     for edit in chai_edits:
 
-        edit_l = edit.split(':')
-        if edit_l[3] == 'R': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 10
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 10 + atom_idx_mark_dic[int(edit_l[0])]
-        elif edit_l[3] == 'S': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 20
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 20 + atom_idx_mark_dic[int(edit_l[0])]
-        elif edit_l[3] == '?': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 30
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 30 + atom_idx_mark_dic[int(edit_l[0])]
+#         edit_l = edit.split(':')
+#         if edit_l[3] == 'R': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 10
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 10 + atom_idx_mark_dic[int(edit_l[0])]
+#         elif edit_l[3] == 'S': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 20
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 20 + atom_idx_mark_dic[int(edit_l[0])]
+#         elif edit_l[3] == '?': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 30
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 30 + atom_idx_mark_dic[int(edit_l[0])]
 
 
-    for edit in charge_edits: 
+#     for edit in charge_edits: 
 
-        edit_l = edit.split(':')
-        if edit_l[3] == '1': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 200
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 200 + atom_idx_mark_dic[int(edit_l[0])]
-                pass
+#         edit_l = edit.split(':')
+#         if edit_l[3] == '1': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 200
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 200 + atom_idx_mark_dic[int(edit_l[0])]
+#                 pass
             
-        elif edit_l[3] == '0': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 400
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 400 + atom_idx_mark_dic[int(edit_l[0])]
+#         elif edit_l[3] == '0': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 400
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 400 + atom_idx_mark_dic[int(edit_l[0])]
 
             
-        elif edit_l[3] == '-1': 
-            if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-                atom_idx_mark_dic[int(edit_l[0])] = 600
-            else:
-                atom_idx_mark_dic[int(edit_l[0])] = 600 + atom_idx_mark_dic[int(edit_l[0])]
+#         elif edit_l[3] == '-1': 
+#             if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#                 atom_idx_mark_dic[int(edit_l[0])] = 600
+#             else:
+#                 atom_idx_mark_dic[int(edit_l[0])] = 600 + atom_idx_mark_dic[int(edit_l[0])]
 
                 
     
-    for edit in core_edits_add:
-        edit_l = edit.split(':')
+#     for edit in core_edits_add:
+#         edit_l = edit.split(':')
 
-        if int(edit_l[0]) not in atom_idx_mark_dic.keys():
-            atom_idx_mark_dic[int(edit_l[0])] = 100
-        else:
-            atom_idx_mark_dic[int(edit_l[0])] = 100 + atom_idx_mark_dic[int(edit_l[0])]
+#         if int(edit_l[0]) not in atom_idx_mark_dic.keys():
+#             atom_idx_mark_dic[int(edit_l[0])] = 100
+#         else:
+#             atom_idx_mark_dic[int(edit_l[0])] = 100 + atom_idx_mark_dic[int(edit_l[0])]
 
             
-        if int(edit_l[1]) not in atom_idx_mark_dic.keys():
-            atom_idx_mark_dic[int(edit_l[1])] = 100
-        else:
-            atom_idx_mark_dic[int(edit_l[1])] = 100 + atom_idx_mark_dic[int(edit_l[1])]
+#         if int(edit_l[1]) not in atom_idx_mark_dic.keys():
+#             atom_idx_mark_dic[int(edit_l[1])] = 100
+#         else:
+#             atom_idx_mark_dic[int(edit_l[1])] = 100 + atom_idx_mark_dic[int(edit_l[1])]
 
 
-    a = Chem.MolFromSmiles(o_smiles,sanitize = False)
+#     a = Chem.MolFromSmiles(o_smiles,sanitize = False)
 
-    for atom in a.GetAtoms():
-        if atom.GetAtomMapNum() in atom_idx_mark_dic.keys():
-            atom_map = atom.GetAtomMapNum()
-            atom.SetIsotope(atom_idx_mark_dic[atom_map])            
-        else:
-            pass
-        atom.SetAtomMapNum(0)
+#     for atom in a.GetAtoms():
+#         if atom.GetAtomMapNum() in atom_idx_mark_dic.keys():
+#             atom_map = atom.GetAtomMapNum()
+#             atom.SetIsotope(atom_idx_mark_dic[atom_map])            
+#         else:
+#             pass
+#         atom.SetAtomMapNum(0)
 
-    mol = copy.deepcopy(a)
+#     mol = copy.deepcopy(a)
 
-    detailed_smiles = Chem.MolToSmiles(mol,canonical = False,allBondsExplicit = True,kekuleSmiles=True)  
+#     detailed_smiles = Chem.MolToSmiles(mol,canonical = False,allBondsExplicit = True,kekuleSmiles=True)  
 
-    concise_smiles = Chem.MolToSmiles(mol,canonical = False,kekuleSmiles=True)                
-    concise_smiles_no_chirality = Chem.MolToSmiles(mol,canonical = False,isomericSmiles = False,kekuleSmiles=True)      
-    atom_pair_bond_idx_dic = get_atom_pair_bond_idx_dic(concise_smiles_no_chirality)      
-    rm_token_lis = get_rm_token_lis(concise_smiles,detailed_smiles)         
-    bond_token_lis = get_bond_token_lis(detailed_smiles)                     
-    bond_token_idx_dic = get_bond_token_idx_dic(bond_token_lis)              
+#     concise_smiles = Chem.MolToSmiles(mol,canonical = False,kekuleSmiles=True)                
+#     concise_smiles_no_chirality = Chem.MolToSmiles(mol,canonical = False,isomericSmiles = False,kekuleSmiles=True)      
+#     atom_pair_bond_idx_dic = get_atom_pair_bond_idx_dic(concise_smiles_no_chirality)      
+#     rm_token_lis = get_rm_token_lis(concise_smiles,detailed_smiles)         
+#     bond_token_lis = get_bond_token_lis(detailed_smiles)                     
+#     bond_token_idx_dic = get_bond_token_idx_dic(bond_token_lis)              
 
 
-    bond_idx_mark_dic = {}
-    for edit in core_edits:
+#     bond_idx_mark_dic = {}
+#     for edit in core_edits:
 
-        b = int(edit.split(':')[0])
-        e = int(edit.split(':')[1])
-        org_b = edit.split(':')[2]
-        new_b = edit.split(':')[3]
-        if min([b,e]) != 0:
-            bond_idx = atom_pair_bond_idx_dic[min([b,e]),max([b,e])]
-            if new_b == '0.0':
-                mark = '!'
-            elif new_b == '1.0':
-                mark = '_'
-            elif new_b == '2.0':
-                mark = ';'
-            elif new_b == '3.0':
-                mark = '^'
-            bond_idx_mark_dic[bond_idx] = mark
-        else:
-            pass
+#         b = int(edit.split(':')[0])
+#         e = int(edit.split(':')[1])
+#         org_b = edit.split(':')[2]
+#         new_b = edit.split(':')[3]
+#         if min([b,e]) != 0:
+#             bond_idx = atom_pair_bond_idx_dic[min([b,e]),max([b,e])]
+#             if new_b == '0.0':
+#                 mark = '!'
+#             elif new_b == '1.0':
+#                 mark = '_'
+#             elif new_b == '2.0':
+#                 mark = ';'
+#             elif new_b == '3.0':
+#                 mark = '^'
+#             bond_idx_mark_dic[bond_idx] = mark
+#         else:
+#             pass
 
-    for edit in stereo_edits:   
+#     for edit in stereo_edits:   
 
-        b = int(edit.split(':')[0])
-        e = int(edit.split(':')[1])
-        new_b = edit.split(':')[3]
-        if min([b,e]) != 0:
-            bond_idx = atom_pair_bond_idx_dic[min([b,e]),max([b,e])]
-            if bond_idx not in bond_idx_mark_dic.keys():  
+#         b = int(edit.split(':')[0])
+#         e = int(edit.split(':')[1])
+#         new_b = edit.split(':')[3]
+#         if min([b,e]) != 0:
+#             bond_idx = atom_pair_bond_idx_dic[min([b,e]),max([b,e])]
+#             if bond_idx not in bond_idx_mark_dic.keys():  
 
-                if new_b == 'a':
-                    mark = '&'
-                elif new_b == 'e':
-                    mark = '{'
-                elif new_b == 'z':
-                    mark = '}'
-                bond_idx_mark_dic[bond_idx] = mark
-            else:
-                bond_idx in bond_idx_mark_dic.keys()      
-                if new_b == 'a':
-                    mark = '。'
-                elif new_b == 'e':
-                    mark = '《'
-                elif new_b == 'z':
-                    mark = '》'
-                bond_idx_mark_dic[bond_idx] = mark
-        else:
-            pass        
+#                 if new_b == 'a':
+#                     mark = '&'
+#                 elif new_b == 'e':
+#                     mark = '{'
+#                 elif new_b == 'z':
+#                     mark = '}'
+#                 bond_idx_mark_dic[bond_idx] = mark
+#             else:
+#                 bond_idx in bond_idx_mark_dic.keys()      
+#                 if new_b == 'a':
+#                     mark = '。'
+#                 elif new_b == 'e':
+#                     mark = '《'
+#                 elif new_b == 'z':
+#                     mark = '》'
+#                 bond_idx_mark_dic[bond_idx] = mark
+#         else:
+#             pass        
 
-    for bond_idx,mark in bond_idx_mark_dic.items():
-        token_idx = bond_token_idx_dic[bond_idx]
-        rm_token_lis[token_idx] = mark
+#     for bond_idx,mark in bond_idx_mark_dic.items():
+#         token_idx = bond_token_idx_dic[bond_idx]
+#         rm_token_lis[token_idx] = mark
 
-    new_smiles_lis = []
-    for i in range(len(rm_token_lis)):
-        if rm_token_lis[i] == ' ':
-            new_smiles_lis.append(detailed_smiles[i])
-        elif rm_token_lis[i][-1] in ['!','_',';','^','&','{','}','。','《','》']:
-            new_smiles_lis.append(rm_token_lis[i])
-        else:
-            pass
+#     new_smiles_lis = []
+#     for i in range(len(rm_token_lis)):
+#         if rm_token_lis[i] == ' ':
+#             new_smiles_lis.append(detailed_smiles[i])
+#         elif rm_token_lis[i][-1] in ['!','_',';','^','&','{','}','。','《','》']:
+#             new_smiles_lis.append(rm_token_lis[i])
+#         else:
+#             pass
 
-    caption = ''.join(new_smiles_lis)
-    #out_b_smiles_lis.append(caption)
+#     caption = ''.join(new_smiles_lis)
+#     #out_b_smiles_lis.append(caption)
 
-    caption_r = caption 
+#     caption_r = caption 
 
-    t_smiles = get_t_smiles(caption_r,o_smiles)
+#     t_smiles = get_t_smiles(caption_r,o_smiles)
 
-    b_smiles,detailed_smiles = get_b_smiles_detailed_smiles(caption_r,t_smiles)
+#     b_smiles,detailed_smiles = get_b_smiles_detailed_smiles(caption_r,t_smiles)
 
-    bond_dic = get_bond_dic(b_smiles,detailed_smiles)
+#     bond_dic = get_bond_dic(b_smiles,detailed_smiles)
 
-    atom_pair_bond_idx = {}
-    for atom_pair,bond_idx in get_atom_pair_bond_idx_dic(o_smiles).items():
-        atom_pair_bond_idx[bond_idx] = atom_pair
+#     atom_pair_bond_idx = {}
+#     for atom_pair,bond_idx in get_atom_pair_bond_idx_dic(o_smiles).items():
+#         atom_pair_bond_idx[bond_idx] = atom_pair
 
-    mol = Chem.MolFromSmiles(t_smiles)
-    Chem.Kekulize(mol)
-    core_edits_ = []
-    chai_edits_ = []
-    stereo_edits_ =  []
-    charge_edits_ =  []
-    core_edits_add_ = []
+#     mol = Chem.MolFromSmiles(t_smiles)
+#     Chem.Kekulize(mol)
+#     core_edits_ = []
+#     chai_edits_ = []
+#     stereo_edits_ =  []
+#     charge_edits_ =  []
+#     core_edits_add_ = []
 
-    for bond_idx,mark in bond_dic.items():    
-        b,e = atom_pair_bond_idx[bond_idx]
-        o_bond = mol.GetBondBetweenAtoms(b-1,e-1).GetBondTypeAsDouble()
-        if mark == '!':
-            n_bond = '0.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-        elif mark == '_':
-            n_bond = '1.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-        elif mark == ';':
-            n_bond = '2.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-        elif mark == '^':
-            n_bond = '3.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-        elif mark == '&':
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'a'))
-        elif mark == '{':
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'e'))      
-        elif mark == '}':
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))   
-        elif mark == '。': 
-            n_bond = '2.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'a'))   
-        elif mark == '《':
-            n_bond = '2.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'e'))
-        elif mark == '》':
-            n_bond = '2.0'
-            core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
-            stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))
+#     for bond_idx,mark in bond_dic.items():    
+#         b,e = atom_pair_bond_idx[bond_idx]
+#         o_bond = mol.GetBondBetweenAtoms(b-1,e-1).GetBondTypeAsDouble()
+#         if mark == '!':
+#             n_bond = '0.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#         elif mark == '_':
+#             n_bond = '1.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#         elif mark == ';':
+#             n_bond = '2.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#         elif mark == '^':
+#             n_bond = '3.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#         elif mark == '&':
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'a'))
+#         elif mark == '{':
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'e'))      
+#         elif mark == '}':
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))   
+#         elif mark == '。': 
+#             n_bond = '2.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'a'))   
+#         elif mark == '《':
+#             n_bond = '2.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'e'))
+#         elif mark == '》':
+#             n_bond = '2.0'
+#             core_edits_.append('{}:{}:{}:{}'.format(b,e,o_bond,n_bond))
+#             stereo_edits_.append('{}:{}:{}:{}'.format(b,e,0,'z'))
 
     
-    core_edits_add_atom_lis = []
+#     core_edits_add_atom_lis = []
     
-    for atom in mol.GetAtoms():   
-        Isotope = atom.GetIsotope()
-        g_w = Isotope % 10
-        s_w = Isotope % 100 //10
-        b_w = Isotope // 100
+#     for atom in mol.GetAtoms():   
+#         Isotope = atom.GetIsotope()
+#         g_w = Isotope % 10
+#         s_w = Isotope % 100 //10
+#         b_w = Isotope // 100
         
-        if g_w == 9:
-            core_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'1.0','0.0'))  
-        else:
-            pass
+#         if g_w == 9:
+#             core_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'1.0','0.0'))  
+#         else:
+#             pass
             
             
-        if s_w == 1:   
-            chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','R'))
-        elif s_w == 2:
-            chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','S'))
-        elif s_w == 3:
-            chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','?'))
+#         if s_w == 1:   
+#             chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','R'))
+#         elif s_w == 2:
+#             chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','S'))
+#         elif s_w == 3:
+#             chai_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0','?'))
 
-        if b_w == 2 or b_w == 3:
-            charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',1))
-        elif b_w == 4 or b_w == 5:
-            charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',0))
-        elif b_w == 6 or b_w == 7:
-            charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',-1))    
+#         if b_w == 2 or b_w == 3:
+#             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',1))
+#         elif b_w == 4 or b_w == 5:
+#             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',0))
+#         elif b_w == 6 or b_w == 7:
+#             charge_edits_.append('{}:{}:{}:{}'.format(atom.GetIdx()+1,0,'0',-1))    
 
-        if b_w % 2 == 1:
-            core_edits_add_atom_lis.append(atom.GetIdx()+1)
+#         if b_w % 2 == 1:
+#             core_edits_add_atom_lis.append(atom.GetIdx()+1)
             
 
-    if core_edits_add_atom_lis != []:
-        core_edits_add_.append('{}:{}:{}:{}'.format(core_edits_add_atom_lis[0],core_edits_add_atom_lis[1],'0.0','1.0'))
-    else:
-        pass
+#     if core_edits_add_atom_lis != []:
+#         core_edits_add_.append('{}:{}:{}:{}'.format(core_edits_add_atom_lis[0],core_edits_add_atom_lis[1],'0.0','1.0'))
+#     else:
+#         pass
 
-    if sorted(core_edits_) != sorted(core_edits) or sorted(chai_edits_) != sorted(chai_edits) or sorted(stereo_edits_) != sorted(stereo_edits) or sorted(charge_edits_) != sorted(charge_edits) or sorted(core_edits_add_) != sorted(core_edits_add):
-        print(core_edits_,core_edits)
-        print(chai_edits_,chai_edits)
-        print(core_edits_add_,core_edits_add)
-        return 'error'
-    else:
-        return caption
-        pass
+#     if sorted(core_edits_) != sorted(core_edits) or sorted(chai_edits_) != sorted(chai_edits) or sorted(stereo_edits_) != sorted(stereo_edits) or sorted(charge_edits_) != sorted(charge_edits) or sorted(core_edits_add_) != sorted(core_edits_add):
+#         print(core_edits_,core_edits)
+#         print(chai_edits_,chai_edits)
+#         print(core_edits_add_,core_edits_add)
+#         return 'error'
+#     else:
+#         return caption
+#         pass
     
     
 def get_b_smiles_forward(p_b):
